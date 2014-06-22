@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import eu.stratosphere.core.fs.FSDataOutputStream;
 import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.util.StringUtils;
 
@@ -20,11 +21,14 @@ final class BlobConnection extends Thread {
 	 */
 	private static final Log LOG = LogFactory.getLog(BlobConnection.class);
 
+	private final BlobManager blobManager;
+
 	private final Socket socket;
 
-	BlobConnection(final Socket socket) {
+	BlobConnection(final BlobManager blobManager, final Socket socket) {
 		super("BLOB connection from " + socket.getRemoteSocketAddress());
 
+		this.blobManager = blobManager;
 		this.socket = socket;
 	}
 
@@ -46,7 +50,7 @@ final class BlobConnection extends Thread {
 				put(is, this.socket.getOutputStream());
 				break;
 			case BlobService.GET_OPERATION:
-				get();
+				get(is, this.socket.getOutputStream());
 				break;
 			default:
 				if (LOG.isErrorEnabled()) {
@@ -66,7 +70,7 @@ final class BlobConnection extends Thread {
 		}
 	}
 
-	private static void put(final InputStream inputStream, final OutputStream outputStream) throws IOException {
+	private void put(final InputStream inputStream, final OutputStream outputStream) throws IOException {
 
 		final JobID jobID = BlobService.receiveJobID(inputStream);
 
@@ -74,37 +78,78 @@ final class BlobConnection extends Thread {
 		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
 		final byte[] lenBuf = new byte[4];
 
-		while (true) {
+		final BlobTempFile tempFile = this.blobManager.createTempFile();
+		final FSDataOutputStream fos = tempFile.getOutputStream();
+		boolean deleteTempFile = true;
+		try {
 
-			final int bytesToReceive = BlobService.readLength(lenBuf, inputStream);
-			if (bytesToReceive < 0) {
-				break;
-			}
+			while (true) {
 
-			int bytesInBuffer = 0;
-			while (bytesInBuffer < bytesToReceive) {
-				final int read = inputStream.read(buf, bytesInBuffer, bytesToReceive - bytesInBuffer);
-				if (read < 0) {
-					throw new EOFException();
+				final int bytesToReceive = BlobService.readLength(lenBuf, inputStream);
+				if (bytesToReceive < 0) {
+					break;
 				}
-				bytesInBuffer += read;
+
+				int bytesInBuffer = 0;
+				while (bytesInBuffer < bytesToReceive) {
+					final int read = inputStream.read(buf, bytesInBuffer, bytesToReceive - bytesInBuffer);
+					if (read < 0) {
+						throw new EOFException();
+					}
+					bytesInBuffer += read;
+				}
+
+				md.update(buf, 0, bytesInBuffer);
+				fos.write(buf, 0, bytesInBuffer);
 			}
 
-			md.update(buf, 0, bytesInBuffer);
-			// TODO: Write the data somewhere
+			// Close file stream and compute key
+			fos.close();
+			final BlobKey key = new BlobKey(md.digest());
+
+			deleteTempFile = !this.blobManager.put(jobID, key, tempFile);
+
+			// TODO: Register BLOB with BLOB manager
+
+			// Send the key back to the client for verification
+			key.writeToOutputStream(outputStream);
+
+		} finally {
+			if (deleteTempFile) {
+				tempFile.delete();
+			}
 		}
-
-		final byte[] digest = md.digest();
-		final BlobKey key = new BlobKey(digest);
-
-		// Send the key back to the client for verification
-		outputStream.write(digest);
-
-		// TODO: Register BLOB with BLOB manager
 
 	}
 
-	private static void get() throws IOException {
-		// TODO: Implement me
+	private void get(final InputStream inputStream, final OutputStream outputStream) throws IOException {
+
+		// Receive the blob key
+		final BlobKey key = BlobKey.readFromInputStream(inputStream);
+
+		final InputStream fis = this.blobManager.get(key);
+		if (fis == null) {
+			outputStream.write(0);
+			return;
+		}
+
+		outputStream.write(1);
+		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
+
+		try {
+
+			while (true) {
+
+				final int read = fis.read(buf);
+				if (read < 0) {
+					break;
+				}
+
+				outputStream.write(buf, 0, read);
+			}
+
+		} finally {
+			fis.close();
+		}
 	}
 }

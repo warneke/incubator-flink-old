@@ -20,9 +20,9 @@ package eu.stratosphere.configuration;
 public final class ConfigConstants {
 
 	// ------------------------------------------------------------------------
-	//                            Configuration Keys
+	// Configuration Keys
 	// ------------------------------------------------------------------------
-	
+
 	// ---------------------------- Parallelism -------------------------------
 
 	/**
@@ -34,8 +34,13 @@ public final class ConfigConstants {
 	 * The config parameter defining the maximal intra-node parallelism for jobs.
 	 */
 	public static final String PARALLELIZATION_MAX_INTRA_NODE_DEGREE_KEY = "parallelization.intra-node.default";
-	
+
 	// -------------------------------- Runtime -------------------------------
+
+	/**
+	 * The config parameter defining the storage directory to be used by the BLOB manager.
+	 */
+	public static final String BLOB_STORAGE_DIRECTORY = "blob.storage.directory";
 
 	/**
 	 * The config parameter defining the network address to connect to
@@ -48,7 +53,7 @@ public final class ConfigConstants {
 	 * for communication with the job manager.
 	 */
 	public static final String JOB_MANAGER_IPC_PORT_KEY = "jobmanager.rpc.port";
-	
+
 	/**
 	 * The config parameter defining the number of handler threads for the jobmanager RPC service.
 	 */
@@ -75,7 +80,7 @@ public final class ConfigConstants {
 	 * by {@link #TASK_MANAGER_MEMORY_FRACTION_KEY}.
 	 */
 	public static final String TASK_MANAGER_MEMORY_SIZE_KEY = "taskmanager.memory.size";
-	
+
 	/**
 	 * The config parameter defining the fraction of free memory allocated by the memory manager.
 	 */
@@ -85,8 +90,7 @@ public final class ConfigConstants {
 	 * The key for the config parameter defining whether the memory manager allocates memory lazy.
 	 */
 	public static final String TASK_MANAGER_MEMORY_LAZY_ALLOCATION_KEY = "taskmanager.memory.lazyalloc";
-	
-	
+
 	/**
 	 * The config parameter defining the number of buffers used in the network stack. This defines the
 	 * number of possible tasks and shuffles.
@@ -119,7 +123,7 @@ public final class ConfigConstants {
 	 * The high water mark used in NettyConnectionManager for the Bootstrap.
 	 */
 	public static final String TASK_MANAGER_NET_NETTY_HIGH_WATER_MARK = "taskmanager.net.nettyHighWaterMark";
-	
+
 	/**
 	 * Parameter for the interval in which the TaskManager sends the periodic heart beat messages
 	 * to the JobManager (in msecs).
@@ -139,7 +143,7 @@ public final class ConfigConstants {
 	/**
 	 * Parameter for the maximum fan for out-of-core algorithms.
 	 * Corresponds to the maximum fan-in for merge-sorts and the maximum fan-out
-	 * for hybrid hash joins. 
+	 * for hybrid hash joins.
 	 */
 	public static final String DEFAULT_SPILLING_MAX_FAN_KEY = "taskmanager.runtime.max-fan";
 
@@ -148,19 +152,19 @@ public final class ConfigConstants {
 	 * sorter will start spilling to disk.
 	 */
 	public static final String DEFAULT_SORT_SPILLING_THRESHOLD_KEY = "taskmanager.runtime.sort-spilling-threshold";
-	
+
 	/**
 	 * The config parameter defining the timeout for filesystem stream opening.
 	 * A value of 0 indicates infinite waiting.
 	 */
 	public static final String FS_STREAM_OPENING_TIMEOUT_KEY = "taskmanager.runtime.fs_timeout";
-	
+
 	/**
 	 * The config parameter defining whether to use the special multicast logic
 	 * for broadcasts. Use with caution! The multicast logic is experimental at this point.
 	 */
 	public static final String USE_MULTICAST_FOR_BROADCAST = "taskmanager.runtime.multicast-for-broadcast";
-	
+
 	/**
 	 * The parameter defining the polling interval (in seconds) for the JobClient.
 	 */
@@ -172,17 +176,17 @@ public final class ConfigConstants {
 	 * Path to hdfs-defaul.xml file
 	 */
 	public static final String HDFS_DEFAULT_CONFIG = "fs.hdfs.hdfsdefault";
-	
+
 	/**
 	 * Path to hdfs-site.xml file
 	 */
 	public static final String HDFS_SITE_CONFIG = "fs.hdfs.hdfssite";
-	
+
 	/**
 	 * Path to Hadoop configuration
 	 */
 	public static final String PATH_HADOOP_CONFIG = "fs.hdfs.hadoopconf";
-	
+
 	// ------------------------ File System Bahavior ------------------------
 
 	/**
@@ -191,7 +195,8 @@ public final class ConfigConstants {
 	public static final String FILESYSTEM_DEFAULT_OVERWRITE_KEY = "fs.overwrite-files";
 
 	/**
-	 * Key to specify whether the file systems should always create a directory for the output, even with a parallelism of one.
+	 * Key to specify whether the file systems should always create a directory for the output, even with a parallelism
+	 * of one.
 	 */
 	public static final String FILESYSTEM_OUTPUT_ALWAYS_CREATE_DIRECTORY_KEY = "fs.output.always-create-directory";
 
@@ -213,10 +218,9 @@ public final class ConfigConstants {
 	 * The maximum length of a single sampled record before the sampling is aborted.
 	 */
 	public static final String DELIMITED_FORMAT_MAX_SAMPLE_LENGTH_KEY = "compiler.delimited-informat.max-sample-len";
-	
-	
+
 	// ------------------------- JobManager Web Frontend ----------------------
-	
+
 	/**
 	 * The port for the pact web-frontend server.
 	 */
@@ -231,17 +235,16 @@ public final class ConfigConstants {
 	 * The config parameter defining the path to the htaccess file protecting the web frontend.
 	 */
 	public static final String JOB_MANAGER_WEB_ACCESS_FILE_KEY = "jobmanager.web.access";
-	
+
 	/**
 	 * The config parameter defining the number of archived jobs for the jobmanager
 	 */
 	public static final String JOB_MANAGER_WEB_ARCHIVE_COUNT = "jobmanager.web.history";
-	
+
 	public static final String JOB_MANAGER_WEB_LOG_PATH_KEY = "jobmanager.web.logpath";
-	
-	
+
 	// ------------------------------ Web Client ------------------------------
-	
+
 	/**
 	 * The config parameter defining port for the pact web-frontend server.
 	 */
@@ -271,22 +274,22 @@ public final class ConfigConstants {
 	 * The config parameter defining the port to the htaccess file protecting the web client.
 	 */
 	public static final String WEB_ACCESS_FILE_KEY = "webclient.access";
-	
+
 	// ----------------------------- Miscellaneous ----------------------------
-	
+
 	/**
 	 * The key for Stratosphere's base directory path
 	 */
 	public static final String STRATOSPHERE_BASE_DIR_PATH_KEY = "stratosphere.base.dir.path";
-	
+
 	public static final String STRATOSPHERE_JVM_OPTIONS = "env.java.opts";
 
 	// ------------------------------------------------------------------------
-	//                            Default Values
+	// Default Values
 	// ------------------------------------------------------------------------
 
 	// ---------------------------- Parallelism -------------------------------
-	
+
 	/**
 	 * The default degree of parallelism for operations.
 	 */
@@ -296,9 +299,9 @@ public final class ConfigConstants {
 	 * The default intra-node parallelism.
 	 */
 	public static final int DEFAULT_MAX_INTRA_NODE_PARALLELIZATION_DEGREE = -1;
-	
+
 	// ------------------------------ Runtime ---------------------------------
-	
+
 	/**
 	 * The default network port to connect to for communication with the job manager.
 	 */
@@ -308,7 +311,7 @@ public final class ConfigConstants {
 	 * The default number of handler threads for the jobmanager RPC service.
 	 */
 	public static final int DEFAULT_JOB_MANAGER_IPC_HANDLERS = 8;
-	
+
 	/**
 	 * The default network port the task manager expects incoming IPC connections.
 	 */
@@ -323,12 +326,12 @@ public final class ConfigConstants {
 	 * The default directory for temporary files of the task manager.
 	 */
 	public static final String DEFAULT_TASK_MANAGER_TMP_PATH = System.getProperty("java.io.tmpdir");
-	
+
 	/**
 	 * The default fraction of the free memory allocated by the task manager's memory manager.
 	 */
 	public static final float DEFAULT_MEMORY_MANAGER_MEMORY_FRACTION = 0.7f;
-	
+
 	/**
 	 * The default setting for the memory manager lazy allocation feature.
 	 */
@@ -384,28 +387,27 @@ public final class ConfigConstants {
 	 * The interval (in ms) for the log thread to log the current memory usage.
 	 */
 	public static final int DEFAULT_TASK_MANAGER_DEBUG_MEMORY_USAGE_LOG_INTERVAL_MS = 5000;
-	
+
 	/**
 	 * The default value for the JobClient's polling interval. 2 Seconds.
 	 */
 	public static final int DEFAULT_JOBCLIENT_POLLING_INTERVAL = 2;
-	
+
 	/**
 	 * The default value for the maximum spilling fan in/out.
 	 */
 	public static final int DEFAULT_SPILLING_MAX_FAN = 128;
-	
+
 	/**
 	 * The default percentage of the sort memory to be full before data is spilled.
 	 */
 	public static final float DEFAULT_SORT_SPILLING_THRESHOLD = 0.8f;
-	
+
 	/**
 	 * The default timeout for filesystem stream opening: infinite (means max long milliseconds).
 	 */
 	public static final int DEFAULT_FS_STREAM_OPENING_TIMEOUT = 0;
-	
-	
+
 	// ------------------------ File System Bahavior ------------------------
 
 	/**
@@ -417,28 +419,26 @@ public final class ConfigConstants {
 	 * The default behavior for output directory creating (create only directory when parallelism > 1).
 	 */
 	public static final boolean DEFAULT_FILESYSTEM_ALWAYS_CREATE_DIRECTORY = false;
-	
-	
+
 	// ---------------------------- Compiler -------------------------------
 
 	/**
 	 * The default maximum number of line samples taken by the delimited input format.
 	 */
 	public static final int DEFAULT_DELIMITED_FORMAT_MAX_LINE_SAMPLES = 10;
-	
+
 	/**
 	 * The default minimum number of line samples taken by the delimited input format.
 	 */
 	public static final int DEFAULT_DELIMITED_FORMAT_MIN_LINE_SAMPLES = 2;
-	
+
 	/**
 	 * The default maximum sample length before sampling is aborted (2 MiBytes).
 	 */
 	public static final int DEFAULT_DELIMITED_FORMAT_MAX_SAMPLE_LEN = 2 * 1024 * 1024;
-	
-	
+
 	// ------------------------- JobManager Web Frontend ----------------------
-	
+
 	/**
 	 */
 	public static final int DEFAULT_JOB_MANAGER_WEB_FRONTEND_PORT = 8081;
@@ -447,20 +447,20 @@ public final class ConfigConstants {
 	 * The default directory name of the info server
 	 */
 	public static final String DEFAULT_JOB_MANAGER_WEB_PATH_NAME = "web-docs-infoserver";
-	
+
 	/**
 	 * The default path of the directory for info server containing the web documents.
 	 */
-	public static final String DEFAULT_JOB_MANAGER_WEB_ROOT_PATH = "./resources/"+DEFAULT_JOB_MANAGER_WEB_PATH_NAME+"/";
-	
+	public static final String DEFAULT_JOB_MANAGER_WEB_ROOT_PATH = "./resources/" + DEFAULT_JOB_MANAGER_WEB_PATH_NAME
+		+ "/";
+
 	/**
 	 * The default number of archived jobs for the jobmanager
 	 */
 	public static final int DEFAULT_JOB_MANAGER_WEB_ARCHIVE_COUNT = 5;
-	
-	
+
 	// ------------------------------ Web Client ------------------------------
-	
+
 	/**
 	 * The default port to launch the web frontend server on.
 	 */
@@ -486,7 +486,6 @@ public final class ConfigConstants {
 	 * The default directory to store uploaded jobs in.
 	 */
 	public static final String DEFAULT_WEB_JOB_STORAGE_DIR = DEFAULT_WEB_TMP_DIR + "/webclient-jobs/";
-	
 
 	/**
 	 * The default path to the file containing the list of access privileged users and passwords.
@@ -499,14 +498,14 @@ public final class ConfigConstants {
 	 * Sets the number of local task managers
 	 */
 	public static final String LOCAL_INSTANCE_MANAGER_NUMBER_TASK_MANAGER = "localinstancemanager.numtaskmanager";
-	
-	
+
 	// ----------------------------- Deprecated --------------------------------
 
 	/**
 	 * The default definition for an instance type, if no other configuration is provided.
 	 */
-	public static final String DEFAULT_INSTANCE_TYPE = "default,1,1,1,1,0"; // minimalistic instance type until "cloud" model is fully removed.
+	public static final String DEFAULT_INSTANCE_TYPE = "default,1,1,1,1,0"; // minimalistic instance type until "cloud"
+																			// model is fully removed.
 
 	/**
 	 * The default index for the default instance type.
@@ -514,9 +513,10 @@ public final class ConfigConstants {
 	public static final int DEFAULT_DEFAULT_INSTANCE_TYPE_INDEX = 1;
 
 	// ------------------------------------------------------------------------
-	
+
 	/**
 	 * Not instantiable.
 	 */
-	private ConfigConstants() {}
+	private ConfigConstants() {
+	}
 }

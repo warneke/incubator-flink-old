@@ -2,7 +2,10 @@ package eu.stratosphere.nephele.services.blob;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import eu.stratosphere.core.io.IOReadableWritable;
@@ -11,7 +14,7 @@ public final class BlobKey implements IOReadableWritable {
 
 	private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
-	static final int SIZE = 20;
+	private static final int SIZE = 20;
 
 	private final byte[] key;
 
@@ -81,5 +84,26 @@ public final class BlobKey implements IOReadableWritable {
 		}
 
 		return new String(hexChars);
+	}
+
+	static BlobKey readFromInputStream(final InputStream inputStream) throws IOException {
+
+		final byte[] key = new byte[BlobKey.SIZE];
+
+		int bytesRead = 0;
+		while (bytesRead < BlobKey.SIZE) {
+			final int read = inputStream.read(key, bytesRead, BlobKey.SIZE - bytesRead);
+			if (read < 0) {
+				throw new EOFException();
+			}
+			bytesRead += read;
+		}
+
+		return new BlobKey(key);
+	}
+
+	void writeToOutputStream(final OutputStream outputStream) throws IOException {
+
+		outputStream.write(this.key);
 	}
 }

@@ -1,6 +1,7 @@
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,11 +45,18 @@ public final class BlobService {
 			final OutputStream os = socket.getOutputStream();
 			os.write(PUT_OPERATION);
 			sendJobID(jobID, os);
-
 			final MessageDigest md = getMessageDigest();
-			md.update(buf, offset, len);
-			writeLength(len, lenBuf, os);
-			os.write(buf, offset, len);
+
+			int bytesSent = 0;
+			while (bytesSent < len) {
+
+				final int bytesToSend = Math.min(TRANSFER_BUFFER_SIZE, len - bytesSent);
+				writeLength(bytesToSend, lenBuf, os);
+				md.update(buf, offset + bytesSent, bytesToSend);
+				os.write(buf, offset + bytesSent, bytesToSend);
+				bytesSent += bytesToSend;
+			}
+
 			writeLength(-1, lenBuf, os);
 			os.flush();
 
@@ -109,6 +117,34 @@ public final class BlobService {
 		}
 	}
 
+	public static InputStream get(final BlobKey key, final InetSocketAddress addr) throws IOException {
+
+		Socket socket = null;
+		int status = 0;
+		try {
+			socket = new Socket(addr.getAddress(), addr.getPort());
+			final OutputStream os = socket.getOutputStream();
+			os.write(GET_OPERATION);
+			key.writeToOutputStream(os);
+			os.flush();
+
+			final InputStream is = socket.getInputStream();
+			status = is.read();
+			if (status < 0) {
+				throw new EOFException();
+			} else if (status == 0) {
+				throw new FileNotFoundException();
+			}
+
+			return is;
+
+		} finally {
+			if (status <= 0) {
+				closeSilently(socket);
+			}
+		}
+	}
+
 	/**
 	 * Returns an instance of the message digest to use for the BLOB key computation.
 	 * 
@@ -163,23 +199,14 @@ public final class BlobService {
 
 	private static final BlobKey finishPut(final InputStream inputStream) throws IOException {
 
-		final byte[] key = new byte[BlobKey.SIZE];
-
-		int bytesRead = 0;
-		while (bytesRead < BlobKey.SIZE) {
-			final int read = inputStream.read(key, bytesRead, BlobKey.SIZE - bytesRead);
-			if (read < 0) {
-				throw new EOFException();
-			}
-			bytesRead += read;
-		}
+		final BlobKey key = BlobKey.readFromInputStream(inputStream);
 
 		// Next byte must be end of stream
 		if (inputStream.read() >= 0) {
 			throw new IOException("Received unexpected input while trying to finish put operation");
 		}
 
-		return new BlobKey(key);
+		return key;
 	}
 
 	static void writeLength(final int length, final byte[] buf, final OutputStream outputStream) throws IOException {
@@ -203,7 +230,7 @@ public final class BlobService {
 			bytesRead += read;
 		}
 
-		bytesRead = buf[0];
+		bytesRead = buf[0] & 0xff;
 		bytesRead |= (buf[1] & 0xff) << 8;
 		bytesRead |= (buf[2] & 0xff) << 16;
 		bytesRead |= (buf[3] & 0xff) << 24;
