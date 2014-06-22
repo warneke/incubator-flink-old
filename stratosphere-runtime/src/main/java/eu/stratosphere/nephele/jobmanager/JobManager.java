@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import eu.stratosphere.nephele.ExecutionMode;
 import eu.stratosphere.nephele.managementgraph.ManagementVertexID;
 import eu.stratosphere.nephele.taskmanager.TaskKillResult;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -99,6 +100,7 @@ import eu.stratosphere.nephele.protocols.ExtendedManagementProtocol;
 import eu.stratosphere.nephele.protocols.InputSplitProviderProtocol;
 import eu.stratosphere.nephele.protocols.JobManagerProtocol;
 import eu.stratosphere.nephele.services.accumulators.AccumulatorEvent;
+import eu.stratosphere.nephele.services.blob.BlobManager;
 import eu.stratosphere.nephele.taskmanager.AbstractTaskResult;
 import eu.stratosphere.nephele.taskmanager.TaskCancelResult;
 import eu.stratosphere.nephele.taskmanager.TaskExecutionState;
@@ -130,6 +132,8 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 	private final JobManagerProfiler profiler;
 
 	private final EventCollector eventCollector;
+	
+	private final BlobManager blobManager;
 	
 	private final ArchiveListener archive;
 
@@ -176,6 +180,11 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 
 		// Load the job progress collector
 		this.eventCollector = new EventCollector(this.recommendedClientPollingInterval);
+		
+		// Start the BLOB manager
+		final int blobManagerPort = GlobalConfiguration.getInteger(ConfigConstants.BLOB_MANAGER_PORT, 
+			ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
+		this.blobManager = new BlobManager(ipcAddress, blobManagerPort);
 		
 		// Register simple job archive
 		int archived_items = GlobalConfiguration.getInteger(
@@ -287,6 +296,11 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 		// Stop and clean up the job progress collector
 		if (this.eventCollector != null) {
 			this.eventCollector.shutdown();
+		}
+		
+		// Stop the BLOB manager
+		if (this.blobManager != null) {
+			this.blobManager.shutdown();
 		}
 
 		// Finally, shut down the scheduler

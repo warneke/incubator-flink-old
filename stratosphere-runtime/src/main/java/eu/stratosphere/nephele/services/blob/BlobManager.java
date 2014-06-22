@@ -71,7 +71,7 @@ public final class BlobManager extends Thread {
 
 	private static final Path createStorageDirectory() throws IOException {
 
-		String dir = GlobalConfiguration.getString(ConfigConstants.BLOB_STORAGE_DIRECTORY, null);
+		String dir = GlobalConfiguration.getString(ConfigConstants.BLOB_MANAGER_DIRECTORY, null);
 		final Path storageBaseDir;
 		final FileSystem fs;
 		if (dir != null) {
