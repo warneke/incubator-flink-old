@@ -26,15 +26,21 @@ import eu.stratosphere.api.common.JobExecutionResult;
 import eu.stratosphere.api.common.accumulators.AccumulatorHelper;
 import eu.stratosphere.configuration.ConfigConstants;
 import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.core.fs.FSDataInputStream;
+import eu.stratosphere.core.fs.FileSystem;
+import eu.stratosphere.core.fs.Path;
 import eu.stratosphere.nephele.event.job.AbstractEvent;
 import eu.stratosphere.nephele.event.job.JobEvent;
 import eu.stratosphere.nephele.ipc.RPC;
 import eu.stratosphere.nephele.jobgraph.JobGraph;
+import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.nephele.jobgraph.JobStatus;
 import eu.stratosphere.nephele.net.NetUtils;
 import eu.stratosphere.nephele.protocols.AccumulatorProtocol;
 import eu.stratosphere.nephele.protocols.JobManagementProtocol;
 import eu.stratosphere.nephele.services.accumulators.AccumulatorEvent;
+import eu.stratosphere.nephele.services.blob.BlobKey;
+import eu.stratosphere.nephele.services.blob.BlobService;
 import eu.stratosphere.nephele.types.IntegerRecord;
 import eu.stratosphere.util.StringUtils;
 
@@ -49,6 +55,11 @@ public class JobClient {
 	 * The logging object used for debugging.
 	 */
 	private static final Log LOG = LogFactory.getLog(JobClient.class);
+
+	/**
+	 * The address the IPC service of the job manager listens on.
+	 */
+	private final InetSocketAddress jobManagerAddress;
 
 	/**
 	 * The job management server stub.
@@ -79,8 +90,7 @@ public class JobClient {
 	 * The sequence number of the last processed event received from the job manager.
 	 */
 	private long lastProcessedEventSequenceNumber = -1;
-	
-	
+
 	private PrintStream console;
 
 	/**
@@ -143,9 +153,11 @@ public class JobClient {
 		final int port = configuration.getInteger(ConfigConstants.JOB_MANAGER_IPC_PORT_KEY,
 			ConfigConstants.DEFAULT_JOB_MANAGER_IPC_PORT);
 
-		final InetSocketAddress inetaddr = new InetSocketAddress(address, port);
-		this.jobSubmitClient = RPC.getProxy(JobManagementProtocol.class, inetaddr, NetUtils.getSocketFactory());
-		this.accumulatorProtocolProxy = RPC.getProxy(AccumulatorProtocol.class, inetaddr, NetUtils.getSocketFactory());
+		this.jobManagerAddress = new InetSocketAddress(address, port);
+		this.jobSubmitClient = RPC.getProxy(JobManagementProtocol.class, this.jobManagerAddress,
+			NetUtils.getSocketFactory());
+		this.accumulatorProtocolProxy = RPC.getProxy(AccumulatorProtocol.class, this.jobManagerAddress,
+			NetUtils.getSocketFactory());
 		this.jobGraph = jobGraph;
 		this.configuration = configuration;
 		this.jobCleanUp = new JobCleanUp(this);
@@ -168,7 +180,9 @@ public class JobClient {
 			final InetSocketAddress jobManagerAddress)
 			throws IOException {
 
-		this.jobSubmitClient = RPC.getProxy(JobManagementProtocol.class, jobManagerAddress,	NetUtils.getSocketFactory());
+		this.jobManagerAddress = jobManagerAddress;
+		this.jobSubmitClient = RPC
+			.getProxy(JobManagementProtocol.class, jobManagerAddress, NetUtils.getSocketFactory());
 		this.jobGraph = jobGraph;
 		this.configuration = configuration;
 		this.jobCleanUp = new JobCleanUp(this);
@@ -208,6 +222,30 @@ public class JobClient {
 	public JobSubmissionResult submitJob() throws IOException {
 
 		synchronized (this.jobSubmitClient) {
+
+			// We submit the required files with the BLOB manager before the submission of the actual job graph
+			final int blobManagerPort = this.configuration.getInteger(ConfigConstants.BLOB_MANAGER_PORT,
+				ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
+			final InetSocketAddress blobManagerAddress = new InetSocketAddress(this.jobManagerAddress.getAddress(),
+				blobManagerPort);
+
+			final Path[] jars = this.jobGraph.getJars();
+			final JobID jobID = this.jobGraph.getJobID();
+			for (final Path jar : jars) {
+
+				final FileSystem fs = jar.getFileSystem();
+				FSDataInputStream is = null;
+				try {
+					is = fs.open(jar);
+					final BlobKey key = BlobService.put(jobID, is, blobManagerAddress);
+					this.jobGraph.addJarBlobKey(key);
+					System.out.println("Added key " + key);
+				} finally {
+					if (is != null) {
+						is.close();
+					}
+				}
+			}
 
 			return this.jobSubmitClient.submitJob(this.jobGraph);
 		}
@@ -255,7 +293,7 @@ public class JobClient {
 
 		synchronized (this.jobSubmitClient) {
 
-			final JobSubmissionResult submissionResult = this.jobSubmitClient.submitJob(this.jobGraph);
+			final JobSubmissionResult submissionResult = submitJob();
 			if (submissionResult.getReturnCode() == AbstractJobResult.ReturnCode.ERROR) {
 				LOG.error("ERROR: " + submissionResult.getDescription());
 				throw new JobExecutionException(submissionResult.getDescription(), false);
@@ -334,17 +372,17 @@ public class JobClient {
 					if (jobStatus == JobStatus.FINISHED) {
 						Runtime.getRuntime().removeShutdownHook(this.jobCleanUp);
 						final long jobDuration = jobEvent.getTimestamp() - startTimestamp;
-						
+
 						// Request accumulators
 						Map<String, Object> accumulators = null;
 						try {
 							accumulators = AccumulatorHelper.toResultMap(getAccumulators().getAccumulators());
 						} catch (IOException ioe) {
 							Runtime.getRuntime().removeShutdownHook(this.jobCleanUp);
-							throw ioe;	// Rethrow error
+							throw ioe; // Rethrow error
 						}
 						return new JobExecutionResult(jobDuration, accumulators);
-						
+
 					} else if (jobStatus == JobStatus.CANCELED || jobStatus == JobStatus.FAILED) {
 						Runtime.getRuntime().removeShutdownHook(this.jobCleanUp);
 						LOG.info(jobEvent.getOptionalMessage());
@@ -392,7 +430,7 @@ public class JobClient {
 		LOG.error(errorMessage);
 		throw new IOException(errorMessage);
 	}
-	
+
 	public void setConsoleStreamForReporting(PrintStream stream) {
 		this.console = stream;
 	}

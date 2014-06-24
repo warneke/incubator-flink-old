@@ -100,7 +100,7 @@ import eu.stratosphere.nephele.protocols.ExtendedManagementProtocol;
 import eu.stratosphere.nephele.protocols.InputSplitProviderProtocol;
 import eu.stratosphere.nephele.protocols.JobManagerProtocol;
 import eu.stratosphere.nephele.services.accumulators.AccumulatorEvent;
-import eu.stratosphere.nephele.services.blob.BlobManager;
+import eu.stratosphere.nephele.services.blob.BlobService;
 import eu.stratosphere.nephele.taskmanager.AbstractTaskResult;
 import eu.stratosphere.nephele.taskmanager.TaskCancelResult;
 import eu.stratosphere.nephele.taskmanager.TaskExecutionState;
@@ -132,9 +132,7 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 	private final JobManagerProfiler profiler;
 
 	private final EventCollector eventCollector;
-	
-	private final BlobManager blobManager;
-	
+
 	private final ArchiveListener archive;
 
 	private final InputSplitManager inputSplitManager;
@@ -181,10 +179,10 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 		// Load the job progress collector
 		this.eventCollector = new EventCollector(this.recommendedClientPollingInterval);
 		
-		// Start the BLOB manager
-		final int blobManagerPort = GlobalConfiguration.getInteger(ConfigConstants.BLOB_MANAGER_PORT, 
-			ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
-		this.blobManager = new BlobManager(ipcAddress, blobManagerPort);
+		// Initialize the BLOB service in server mode
+		final int blobManagerPort = GlobalConfiguration.getInteger(ConfigConstants.BLOB_MANAGER_PORT,
+				ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
+		BlobService.initServer(new InetSocketAddress(ipcAddress, blobManagerPort));
 		
 		// Register simple job archive
 		int archived_items = GlobalConfiguration.getInteger(
@@ -298,10 +296,8 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 			this.eventCollector.shutdown();
 		}
 		
-		// Stop the BLOB manager
-		if (this.blobManager != null) {
-			this.blobManager.shutdown();
-		}
+		// Stop the BLOB service
+		BlobService.shutdown();
 
 		// Finally, shut down the scheduler
 		if (this.scheduler != null) {
