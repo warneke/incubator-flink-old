@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -803,5 +804,15 @@ public class JobGraph implements IOReadableWritable {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns a set of BLOB keys referring to the JAR files required to run this job.
+	 * 
+	 * @return set of BLOB keys referring to the JAR files required to run this job
+	 */
+	public Set<BlobKey> getUserJarBlobKeys() {
+
+		return Collections.unmodifiableSet(this.userJarBlobKeys);
 	}
 }

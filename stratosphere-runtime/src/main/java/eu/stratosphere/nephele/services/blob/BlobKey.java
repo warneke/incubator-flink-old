@@ -6,11 +6,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 import eu.stratosphere.core.io.IOReadableWritable;
 
-public final class BlobKey implements IOReadableWritable {
+public final class BlobKey implements IOReadableWritable, Comparable<BlobKey> {
 
 	private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
@@ -105,5 +106,31 @@ public final class BlobKey implements IOReadableWritable {
 	void writeToOutputStream(final OutputStream outputStream) throws IOException {
 
 		outputStream.write(this.key);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(final BlobKey o) {
+
+		final byte[] aarr = this.key;
+		final byte[] barr = o.key;
+		final int len = Math.min(aarr.length, barr.length);
+
+		for (int i = 0; i < len; ++i) {
+			final int a = (aarr[i] & 0xff);
+			final int b = (barr[i] & 0xff);
+			if (a != b) {
+				return a - b;
+			}
+		}
+
+		return aarr.length - barr.length;
+	}
+
+	public void addToMessageDigest(final MessageDigest md) {
+
+		md.update(this.key);
 	}
 }

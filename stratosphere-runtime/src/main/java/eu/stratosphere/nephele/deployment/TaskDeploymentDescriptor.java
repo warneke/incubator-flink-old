@@ -16,6 +16,9 @@ package eu.stratosphere.nephele.deployment;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.core.io.IOReadableWritable;
@@ -88,7 +91,7 @@ public final class TaskDeploymentDescriptor implements IOReadableWritable {
 	/**
 	 * The list of JAR files required to run this task.
 	 */
-	private final SerializableArrayList<BlobKey> requiredJarFiles;
+	private final List<BlobKey> requiredJarFiles;
 
 	/**
 	 * Constructs a task deployment descriptor.
@@ -122,7 +125,7 @@ public final class TaskDeploymentDescriptor implements IOReadableWritable {
 			final Class<? extends AbstractInvokable> invokableClass,
 			final SerializableArrayList<GateDeploymentDescriptor> outputGates,
 			final SerializableArrayList<GateDeploymentDescriptor> inputGates,
-			final SerializableArrayList<BlobKey> requiredJarFiles) {
+			final List<BlobKey> requiredJarFiles) {
 
 		if (jobID == null) {
 			throw new IllegalArgumentException("Argument jobID must not be null");
@@ -197,7 +200,7 @@ public final class TaskDeploymentDescriptor implements IOReadableWritable {
 		this.invokableClass = null;
 		this.outputGates = new SerializableArrayList<GateDeploymentDescriptor>();
 		this.inputGates = new SerializableArrayList<GateDeploymentDescriptor>();
-		this.requiredJarFiles = new SerializableArrayList<BlobKey>();
+		this.requiredJarFiles = new ArrayList<BlobKey>();
 	}
 
 	@Override
@@ -210,7 +213,10 @@ public final class TaskDeploymentDescriptor implements IOReadableWritable {
 		out.writeInt(this.currentNumberOfSubtasks);
 
 		// Write out the BLOB keys of the required JAR files
-		this.requiredJarFiles.write(out);
+		out.writeInt(this.requiredJarFiles.size());
+		for (final Iterator<BlobKey> it = this.requiredJarFiles.iterator(); it.hasNext();) {
+			it.next().write(out);
+		}
 
 		// Write out the name of the invokable class
 		if (this.invokableClass == null) {
@@ -237,7 +243,12 @@ public final class TaskDeploymentDescriptor implements IOReadableWritable {
 		this.currentNumberOfSubtasks = in.readInt();
 
 		// Read BLOB keys of required jar files
-		this.requiredJarFiles.read(in);
+		final int numberOfJarFiles = in.readInt();
+		for (int i = 0; i < numberOfJarFiles; ++i) {
+			final BlobKey key = new BlobKey();
+			key.read(in);
+			this.requiredJarFiles.add(key);
+		}
 
 		// Now register data with the library manager
 		LibraryCacheManager.register(this.jobID, this.requiredJarFiles);

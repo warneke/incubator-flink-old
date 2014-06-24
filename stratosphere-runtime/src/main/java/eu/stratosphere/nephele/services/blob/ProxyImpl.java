@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.security.MessageDigest;
+import java.net.URL;
 
 import eu.stratosphere.nephele.jobgraph.JobID;
 
@@ -29,41 +29,7 @@ final class ProxyImpl extends AbstractBaseImpl {
 	@Override
 	BlobKey put(final JobID jobID, final byte[] buf, final int offset, final int len) throws IOException {
 
-		final byte[] lenBuf = new byte[4];
-
-		Socket socket = null;
-		try {
-			socket = new Socket(this.serverAddress.getAddress(), this.serverAddress.getPort());
-			final OutputStream os = socket.getOutputStream();
-			os.write(BlobService.PUT_OPERATION);
-			sendJobID(jobID, os);
-			final MessageDigest md = getMessageDigest();
-
-			int bytesSent = 0;
-			while (bytesSent < len) {
-
-				final int bytesToSend = Math.min(BlobService.TRANSFER_BUFFER_SIZE, len - bytesSent);
-				writeLength(bytesToSend, lenBuf, os);
-				md.update(buf, offset + bytesSent, bytesToSend);
-				os.write(buf, offset + bytesSent, bytesToSend);
-				bytesSent += bytesToSend;
-			}
-
-			writeLength(-1, lenBuf, os);
-			os.flush();
-
-			final BlobKey localKey = new BlobKey(md.digest());
-			final BlobKey remoteKey = finishPut(socket.getInputStream());
-
-			if (!localKey.equals(remoteKey)) {
-				throw new IOException("Detected data corruption during transfer");
-			}
-
-			return localKey;
-
-		} finally {
-			closeSilently(socket);
-		}
+		return BlobService.put(jobID, buf, offset, len, this.serverAddress);
 	}
 
 	/**
@@ -72,44 +38,7 @@ final class ProxyImpl extends AbstractBaseImpl {
 	@Override
 	BlobKey put(final JobID jobID, final InputStream inputStream) throws IOException {
 
-		final byte[] lenBuf = new byte[4];
-		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
-
-		Socket socket = null;
-		try {
-			socket = new Socket(this.serverAddress.getAddress(), this.serverAddress.getPort());
-			final OutputStream os = socket.getOutputStream();
-			os.write(BlobService.PUT_OPERATION);
-			sendJobID(jobID, os);
-			final MessageDigest md = getMessageDigest();
-
-			while (true) {
-
-				final int read = inputStream.read(buf);
-				if (read < 0) {
-					break;
-				}
-
-				md.update(buf, 0, read);
-				writeLength(read, lenBuf, os);
-				os.write(buf, 0, read);
-			}
-
-			writeLength(-1, lenBuf, os);
-			os.flush();
-
-			final BlobKey localKey = new BlobKey(md.digest());
-			final BlobKey remoteKey = finishPut(socket.getInputStream());
-
-			if (!localKey.equals(remoteKey)) {
-				throw new IOException("Detected data corruption during transfer");
-			}
-
-			return localKey;
-
-		} finally {
-			closeSilently(socket);
-		}
+		return BlobService.put(jobID, inputStream, this.serverAddress);
 	}
 
 	/**
@@ -157,30 +86,14 @@ final class ProxyImpl extends AbstractBaseImpl {
 
 		} finally {
 			if (status <= 0) {
-				closeSilently(socket);
+				BlobService.closeSilently(socket);
 			}
 		}
 	}
 
-	private static final BlobKey finishPut(final InputStream inputStream) throws IOException {
-
-		final BlobKey key = BlobKey.readFromInputStream(inputStream);
-
-		// Next byte must be end of stream
-		if (inputStream.read() >= 0) {
-			throw new IOException("Received unexpected input while trying to finish put operation");
-		}
-
-		return key;
-	}
-
-	private static void closeSilently(final Socket socket) {
-
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException ioe) {
-			}
-		}
+	@Override
+	URL getURL(BlobKey key) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

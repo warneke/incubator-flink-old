@@ -180,8 +180,8 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 		this.eventCollector = new EventCollector(this.recommendedClientPollingInterval);
 		
 		// Initialize the BLOB service in server mode
-		final int blobManagerPort = GlobalConfiguration.getInteger(ConfigConstants.BLOB_MANAGER_PORT,
-				ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
+		final int blobManagerPort = GlobalConfiguration.getInteger(ConfigConstants.BLOB_SERVICE_PORT,
+				ConfigConstants.DEFAULT_BLOB_SERVICE_PORT);
 		BlobService.initServer(new InetSocketAddress(ipcAddress, blobManagerPort));
 		
 		// Register simple job archive

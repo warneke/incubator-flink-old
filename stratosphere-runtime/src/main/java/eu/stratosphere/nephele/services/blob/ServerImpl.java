@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.security.MessageDigest;
 
 import org.apache.commons.logging.Log;
@@ -62,7 +63,7 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 
 		receiveJobID(inputStream);
 
-		final MessageDigest md = getMessageDigest();
+		final MessageDigest md = BlobService.getMessageDigest();
 		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
 		final byte[] lenBuf = new byte[4];
 
@@ -174,5 +175,11 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("Started BLOB manager on " + this.serverSocket.getLocalSocketAddress());
 		}
+	}
+
+	@Override
+	URL getURL(BlobKey key) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

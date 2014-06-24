@@ -992,7 +992,7 @@ public final class ExecutionVertex {
 			this.vertexID, this.groupVertex.getName(), this.indexInVertexGroup,
 			this.groupVertex.getCurrentNumberOfGroupMembers(), this.executionGraph.getJobConfiguration(),
 			this.groupVertex.getConfiguration(), this.groupVertex.getInvokableClass(), ogd,
-			igd);
+			igd, this.executionGraph.getRequiredJarFiles());
 
 		return tdd;
 	}
