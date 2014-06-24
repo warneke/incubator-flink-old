@@ -22,6 +22,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +57,13 @@ import eu.stratosphere.nephele.jobgraph.JobGraph;
 import eu.stratosphere.nephele.jobgraph.JobGraphDefinitionException;
 import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.nephele.jobgraph.JobTaskVertex;
+import eu.stratosphere.nephele.services.blob.BlobKey;
 import eu.stratosphere.nephele.topology.NetworkTopology;
 import eu.stratosphere.nephele.util.ServerTestUtils;
 import eu.stratosphere.util.LogUtils;
 
 /**
  * This class contains test concerning the correct conversion from {@link JobGraph} to {@link ExecutionGraph} objects.
- * 
  */
 public class ExecutionGraphTest {
 
@@ -71,8 +73,12 @@ public class ExecutionGraphTest {
 	private static final String DEFAULT_INSTANCE_TYPE_NAME = "test";
 
 	/**
+	 * Dummy list of required JAR files.
+	 */
+	private static final Collection<BlobKey> REQUIRED_JAR_FILES = Collections.emptyList();
+
+	/**
 	 * A test implementation of an {@link InstanceManager} which is used as a stub in these tests.
-	 * 
 	 */
 	private static final class TestInstanceManager implements InstanceManager {
 
@@ -214,7 +220,7 @@ public class ExecutionGraphTest {
 	public static void reduceLogLevel() {
 		LogUtils.initializeDefaultConsoleLogger(Level.WARN);
 	}
-	
+
 	/*
 	 * input1 -> task1 -> output1
 	 * output1 shares instance with input1
@@ -257,7 +263,7 @@ public class ExecutionGraphTest {
 			i1.connectTo(t1);
 			t1.connectTo(o1);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
 
@@ -267,7 +273,7 @@ public class ExecutionGraphTest {
 			executionStage.collectRequiredInstanceTypes(instanceRequestMap, ExecutionState.CREATED);
 			assertEquals(1, instanceRequestMap.size());
 			assertEquals(1, (int) instanceRequestMap.getMaximumNumberOfInstances(INSTANCE_MANAGER
-					.getInstanceTypeByName(DEFAULT_INSTANCE_TYPE_NAME)));
+				.getInstanceTypeByName(DEFAULT_INSTANCE_TYPE_NAME)));
 
 			assertEquals(jobID, eg.getJobID());
 			assertEquals(0, eg.getIndexOfCurrentExecutionStage());
@@ -481,7 +487,7 @@ public class ExecutionGraphTest {
 			i1.connectTo(t1, ChannelType.IN_MEMORY);
 			t1.connectTo(o1, ChannelType.IN_MEMORY);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			// now convert job graph to execution graph
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
@@ -597,7 +603,6 @@ public class ExecutionGraphTest {
 			t3.setTaskClass(ForwardTask2Inputs1Output.class);
 			t3.setNumberOfSubtasks(2);
 
-			
 			// output vertex
 			final JobFileOutputVertex o1 = new JobFileOutputVertex("Output 1", jg);
 			o1.setFileOutputClass(FileLineWriter.class);
@@ -616,7 +621,7 @@ public class ExecutionGraphTest {
 			t2.connectTo(t3);
 			t3.connectTo(o1);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
 
@@ -873,7 +878,7 @@ public class ExecutionGraphTest {
 			t4.connectTo(o1, ChannelType.NETWORK);
 			t4.connectTo(o2, ChannelType.NETWORK);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			// now convert job graph to execution graph
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
@@ -883,7 +888,7 @@ public class ExecutionGraphTest {
 			ExecutionStage executionStage = eg.getCurrentExecutionStage();
 			assertNotNull(executionStage);
 			assertEquals(0, executionStage.getStageNumber());
-			
+
 			executionStage.collectRequiredInstanceTypes(instanceRequestMap, ExecutionState.CREATED);
 			assertEquals(1, instanceRequestMap.size());
 			assertEquals(8,
@@ -980,7 +985,7 @@ public class ExecutionGraphTest {
 			cross.connectTo(output, ChannelType.IN_MEMORY, 0, 0,
 				DistributionPattern.POINTWISE);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			// now convert job graph to execution graph
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
@@ -1127,7 +1132,7 @@ public class ExecutionGraphTest {
 			forward2.setVertexToShareInstancesWith(forward3);
 			forward3.setVertexToShareInstancesWith(output1);
 
-			LibraryCacheManager.register(jobID, new String[0]);
+			LibraryCacheManager.register(jobID, REQUIRED_JAR_FILES);
 
 			// now convert job graph to execution graph
 			final ExecutionGraph eg = new ExecutionGraph(jg, INSTANCE_MANAGER);
