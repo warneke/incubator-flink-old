@@ -66,9 +66,6 @@ import eu.stratosphere.nephele.deployment.TaskDeploymentDescriptor;
 import eu.stratosphere.nephele.execution.ExecutionState;
 import eu.stratosphere.nephele.execution.RuntimeEnvironment;
 import eu.stratosphere.nephele.execution.librarycache.LibraryCacheManager;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheProfileRequest;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheProfileResponse;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheUpdate;
 import eu.stratosphere.nephele.executiongraph.ExecutionVertexID;
 import eu.stratosphere.nephele.instance.HardwareDescription;
 import eu.stratosphere.nephele.instance.HardwareDescriptionFactory;
@@ -872,30 +869,6 @@ public class TaskManager implements TaskOperationProtocol {
 				}
 			}
 		}
-	}
-
-
-	@Override
-	public LibraryCacheProfileResponse getLibraryCacheProfile(LibraryCacheProfileRequest request) throws IOException {
-
-		LibraryCacheProfileResponse response = new LibraryCacheProfileResponse(request);
-		String[] requiredLibraries = request.getRequiredLibraries();
-
-		for (int i = 0; i < requiredLibraries.length; i++) {
-			if (LibraryCacheManager.contains(requiredLibraries[i]) == null) {
-				response.setCached(i, false);
-			} else {
-				response.setCached(i, true);
-			}
-		}
-
-		return response;
-	}
-
-
-	@Override
-	public void updateLibraryCache(LibraryCacheUpdate update) throws IOException {
-		// Nothing to to here
 	}
 
 	public void executionStateChanged(final JobID jobID, final ExecutionVertexID id,

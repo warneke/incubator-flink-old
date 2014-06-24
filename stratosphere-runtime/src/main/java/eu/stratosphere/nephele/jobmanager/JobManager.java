@@ -1070,13 +1070,6 @@ public class JobManager implements DeploymentManager, ExtendedManagementProtocol
 			@Override
 			public void run() {
 
-				// Check if all required libraries are available on the instance
-				try {
-					instance.checkLibraryAvailability(jobID);
-				} catch (IOException ioe) {
-					LOG.error("Cannot check library availability: " + StringUtils.stringifyException(ioe));
-				}
-
 				final List<TaskDeploymentDescriptor> submissionList = new SerializableArrayList<TaskDeploymentDescriptor>();
 
 				// Check the consistency of the call

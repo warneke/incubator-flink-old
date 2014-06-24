@@ -38,14 +38,14 @@ public final class ConfigConstants {
 	// -------------------------------- Runtime -------------------------------
 
 	/**
-	 * The config parameters defining the port the BLOB manager listens on.
+	 * The config parameters defining the port the BLOB service's server listens on.
 	 */
-	public static final String BLOB_MANAGER_PORT = "blob.manager.port";
+	public static final String BLOB_SERVICE_PORT = "blob.service.port";
 
 	/**
-	 * The config parameter defining the storage directory to be used by the BLOB manager.
+	 * The config parameter defining the storage directory to be used by the BLOB service.
 	 */
-	public static final String BLOB_MANAGER_DIRECTORY = "blob.manager.directory";
+	public static final String BLOB_SERVICE_DIRECTORY = "blob.service.directory";
 
 	/**
 	 * The config parameter defining the network address to connect to
@@ -308,9 +308,9 @@ public final class ConfigConstants {
 	// ------------------------------ Runtime ---------------------------------
 
 	/**
-	 * The default network port the BLOB manager listens on.
+	 * The default network port the BLOB service's server listens on.
 	 */
-	public static final int DEFAULT_BLOB_MANAGER_PORT = 6020;
+	public static final int DEFAULT_BLOB_SERVICE_PORT = 6020;
 
 	/**
 	 * The default network port to connect to for communication with the job manager.

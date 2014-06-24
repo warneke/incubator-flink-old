@@ -16,6 +16,8 @@ package eu.stratosphere.nephele.execution.librarycache;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -121,7 +123,7 @@ public final class LibraryCacheManager {
 	 *         thrown if the library cache manager could not be instantiated or one of the requested libraries is not in
 	 *         the cache
 	 */
-	public static void register(final JobID id, final BlobKey[] requiredJarFiles) throws IOException {
+	public static void register(final JobID id, final Collection<BlobKey> requiredJarFiles) throws IOException {
 
 		LIBRARY_MANAGER.registerInternal(id, requiredJarFiles);
 	}
@@ -138,7 +140,7 @@ public final class LibraryCacheManager {
 	 * @throws IOException
 	 *         thrown if one of the requested libraries is not in the cache
 	 */
-	private void registerInternal(final JobID id, final BlobKey[] requiredJarFiles) throws IOException {
+	private void registerInternal(final JobID id, final Collection<BlobKey> requiredJarFiles) throws IOException {
 
 		// Use spin lock here
 		while (this.lockMap.putIfAbsent(id, LOCK_OBJECT) != null)
@@ -158,16 +160,18 @@ public final class LibraryCacheManager {
 			URL[] urls = null;
 			if (requiredJarFiles != null) {
 
-				urls = new URL[requiredJarFiles.length];
+				urls = new URL[requiredJarFiles.size()];
+				int count = 0;
+				for (final Iterator<BlobKey> it = requiredJarFiles.iterator(); it.hasNext();) {
 
-				for (int i = 0; i < requiredJarFiles.length; i++) {
-					final URL url = BlobService.getURL(requiredJarFiles[i]);
+					final BlobKey key = it.next();
+					final URL url = BlobService.getURL(key);
 					if (url == null) {
-						throw new IOException(requiredJarFiles[i] + " does not exist in the library cache");
+						throw new IOException(key + " does not exist in the library cache");
 					}
 
 					// Add file to the URL array
-					urls[i] = url;
+					urls[count++] = url;
 				}
 			}
 

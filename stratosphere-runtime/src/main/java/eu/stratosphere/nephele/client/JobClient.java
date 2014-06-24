@@ -26,21 +26,15 @@ import eu.stratosphere.api.common.JobExecutionResult;
 import eu.stratosphere.api.common.accumulators.AccumulatorHelper;
 import eu.stratosphere.configuration.ConfigConstants;
 import eu.stratosphere.configuration.Configuration;
-import eu.stratosphere.core.fs.FSDataInputStream;
-import eu.stratosphere.core.fs.FileSystem;
-import eu.stratosphere.core.fs.Path;
 import eu.stratosphere.nephele.event.job.AbstractEvent;
 import eu.stratosphere.nephele.event.job.JobEvent;
 import eu.stratosphere.nephele.ipc.RPC;
 import eu.stratosphere.nephele.jobgraph.JobGraph;
-import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.nephele.jobgraph.JobStatus;
 import eu.stratosphere.nephele.net.NetUtils;
 import eu.stratosphere.nephele.protocols.AccumulatorProtocol;
 import eu.stratosphere.nephele.protocols.JobManagementProtocol;
 import eu.stratosphere.nephele.services.accumulators.AccumulatorEvent;
-import eu.stratosphere.nephele.services.blob.BlobKey;
-import eu.stratosphere.nephele.services.blob.BlobService;
 import eu.stratosphere.nephele.types.IntegerRecord;
 import eu.stratosphere.util.StringUtils;
 
@@ -223,29 +217,13 @@ public class JobClient {
 
 		synchronized (this.jobSubmitClient) {
 
-			// We submit the required files with the BLOB manager before the submission of the actual job graph
-			final int blobManagerPort = this.configuration.getInteger(ConfigConstants.BLOB_MANAGER_PORT,
-				ConfigConstants.DEFAULT_BLOB_MANAGER_PORT);
-			final InetSocketAddress blobManagerAddress = new InetSocketAddress(this.jobManagerAddress.getAddress(),
+			// We submit the required files with the BLOB service before the submission of the actual job graph
+			final int blobManagerPort = this.configuration.getInteger(ConfigConstants.BLOB_SERVICE_PORT,
+				ConfigConstants.DEFAULT_BLOB_SERVICE_PORT);
+			final InetSocketAddress blobServerAddress = new InetSocketAddress(this.jobManagerAddress.getAddress(),
 				blobManagerPort);
 
-			final Path[] jars = this.jobGraph.getJars();
-			final JobID jobID = this.jobGraph.getJobID();
-			for (final Path jar : jars) {
-
-				final FileSystem fs = jar.getFileSystem();
-				FSDataInputStream is = null;
-				try {
-					is = fs.open(jar);
-					final BlobKey key = BlobService.put(jobID, is, blobManagerAddress);
-					this.jobGraph.addJarBlobKey(key);
-					System.out.println("Added key " + key);
-				} finally {
-					if (is != null) {
-						is.close();
-					}
-				}
-			}
+			this.jobGraph.uploadRequiredJarFiles(blobServerAddress);
 
 			return this.jobSubmitClient.submitJob(this.jobGraph);
 		}

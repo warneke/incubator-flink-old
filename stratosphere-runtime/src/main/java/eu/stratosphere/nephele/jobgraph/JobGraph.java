@@ -18,7 +18,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,18 +31,18 @@ import java.util.Vector;
 
 import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.core.fs.FSDataInputStream;
-import eu.stratosphere.core.fs.FileStatus;
 import eu.stratosphere.core.fs.FileSystem;
 import eu.stratosphere.core.fs.Path;
 import eu.stratosphere.core.io.IOReadableWritable;
 import eu.stratosphere.core.io.StringRecord;
 import eu.stratosphere.nephele.execution.librarycache.LibraryCacheManager;
+import eu.stratosphere.nephele.services.blob.BlobKey;
+import eu.stratosphere.nephele.services.blob.BlobService;
 import eu.stratosphere.util.ClassUtils;
 
 /**
  * A job graph represents an entire job in Nephele. A job graph must consists at least of one job vertex
  * and must be acyclic.
- * 
  */
 public class JobGraph implements IOReadableWritable {
 
@@ -82,14 +82,14 @@ public class JobGraph implements IOReadableWritable {
 	private final Configuration taskManagerConfiguration = new Configuration();
 
 	/**
-	 * List of JAR files required to run this job.
+	 * Set of JAR files required to run this job.
 	 */
-	private final ArrayList<Path> userJars = new ArrayList<Path>();
+	private final transient Set<Path> userJars = new HashSet<Path>();
 
 	/**
-	 * Size of the buffer to be allocated for transferring attached files.
+	 * Set of blob keys identifying the JAR files required to run this job.
 	 */
-	private static final int BUFFERSIZE = 8192;
+	private final Set<BlobKey> userJarBlobKeys = new HashSet<BlobKey>();
 
 	/**
 	 * Constructs a new job graph with a random job ID.
@@ -534,7 +534,6 @@ public class JobGraph implements IOReadableWritable {
 		return null;
 	}
 
-
 	@Override
 	public void read(final DataInput in) throws IOException {
 
@@ -544,8 +543,8 @@ public class JobGraph implements IOReadableWritable {
 		// Read the job name
 		this.jobName = StringRecord.readString(in);
 
-		// Read required jar files
-		readRequiredJarFiles(in);
+		// Read BLOB keys for required JAR files
+		readAndRegisterJarBlobKeys(in);
 
 		// First read total number of vertices;
 		final int numVertices = in.readInt();
@@ -625,7 +624,6 @@ public class JobGraph implements IOReadableWritable {
 		this.taskManagerConfiguration.read(in);
 	}
 
-
 	@Override
 	public void write(final DataOutput out) throws IOException {
 
@@ -637,8 +635,8 @@ public class JobGraph implements IOReadableWritable {
 
 		final AbstractJobVertex[] allVertices = this.getAllJobVertices();
 
-		// Write out all required jar files
-		writeRequiredJarFiles(out, allVertices);
+		// Write out all BLOB keys for the JAR files
+		writeJarBlobKeys(out);
 
 		// Write total number of vertices
 		out.writeInt(allVertices.length);
@@ -664,84 +662,45 @@ public class JobGraph implements IOReadableWritable {
 	}
 
 	/**
-	 * Writes the JAR files of all vertices in array <code>jobVertices</code> to the specified output stream.
+	 * Writes the BLOB keys of the jar files required to run this job to the given {@link DataOutput}.
 	 * 
 	 * @param out
-	 *        the output stream to write the JAR files to
-	 * @param jobVertices
-	 *        array of job vertices whose required JAR file are to be written to the output stream
+	 *        the data output to write the BLOB keys to
 	 * @throws IOException
-	 *         thrown if an error occurs while writing to the stream
+	 *         thrown if an error occurs while writing to the data output
 	 */
-	private void writeRequiredJarFiles(final DataOutput out, final AbstractJobVertex[] jobVertices) throws IOException {
+	private void writeJarBlobKeys(final DataOutput out) throws IOException {
 
-		// Now check if all the collected jar files really exist
-		final FileSystem fs = FileSystem.getLocalFileSystem();
+		out.writeInt(this.userJarBlobKeys.size());
 
-		for (int i = 0; i < this.userJars.size(); i++) {
-			if (!fs.exists(this.userJars.get(i))) {
-				throw new IOException("Cannot find jar file " + this.userJars.get(i));
-			}
-		}
-
-		// How many jar files follow?
-		out.writeInt(this.userJars.size());
-
-		for (int i = 0; i < this.userJars.size(); i++) {
-
-			final Path jar = this.userJars.get(i);
-
-			// Write out the actual path
-			jar.write(out);
-
-			// Write out the length of the file
-			final FileStatus file = fs.getFileStatus(jar);
-			out.writeLong(file.getLen());
-
-			// Now write the jar file
-			final FSDataInputStream inStream = fs.open(this.userJars.get(i));
-			final byte[] buf = new byte[BUFFERSIZE];
-			int read = inStream.read(buf, 0, buf.length);
-			while (read > 0) {
-				out.write(buf, 0, read);
-				read = inStream.read(buf, 0, buf.length);
-			}
+		for (final Iterator<BlobKey> it = this.userJarBlobKeys.iterator(); it.hasNext();) {
+			it.next().write(out);
 		}
 	}
 
 	/**
-	 * Reads required JAR files from an input stream and adds them to the
-	 * library cache manager.
+	 * Reads the BLOB keys for the JAR files required to run this job and registers them.
 	 * 
 	 * @param in
-	 *        the data stream to read the JAR files from
+	 *        the data stream to read the BLOB keys from
 	 * @throws IOException
 	 *         thrown if an error occurs while reading the stream
 	 */
-	private void readRequiredJarFiles(final DataInput in) throws IOException {
+	private void readAndRegisterJarBlobKeys(final DataInput in) throws IOException {
 
 		// Do jar files follow;
-		final int numJars = in.readInt();
+		final int numberOfBlobKeys = in.readInt();
 
-		if (numJars > 0) {
-
-			for (int i = 0; i < numJars; i++) {
-
-				final Path p = new Path();
-				p.read(in);
-				this.userJars.add(p);
-
-				// Read the size of the jar file
-				final long sizeOfJar = in.readLong();
-
-				// Add the jar to the library manager
-				LibraryCacheManager.addLibrary(this.jobID, p, sizeOfJar, in);
-			}
-
+		for (int i = 0; i < numberOfBlobKeys; ++i) {
+			final BlobKey key = new BlobKey();
+			key.read(in);
+			System.out.println("Received " + key);
+			this.userJarBlobKeys.add(key);
 		}
+		System.out.println("NUMBER OF BLOB KEYS: " + numberOfBlobKeys);
 
 		// Register this job with the library cache manager
-		LibraryCacheManager.register(this.jobID, this.userJars.toArray(new Path[0]));
+		LibraryCacheManager.register(this.jobID, this.userJarBlobKeys);
 	}
 
 	/**
@@ -756,19 +715,27 @@ public class JobGraph implements IOReadableWritable {
 			return;
 		}
 
-		if (!userJars.contains(jar)) {
-			userJars.add(jar);
-		}
+		this.userJars.add(jar);
 	}
 
-	/**
-	 * Returns a (possibly empty) array of paths to JAR files which are required to run the job on a task manager.
-	 * 
-	 * @return a (possibly empty) array of paths to JAR files which are required to run the job on a task manager
-	 */
-	public Path[] getJars() {
+	public void uploadRequiredJarFiles(final InetSocketAddress serverAddress) throws IOException {
 
-		return userJars.toArray(new Path[userJars.size()]);
+		for (final Iterator<Path> it = this.userJars.iterator(); it.hasNext();) {
+
+			final Path jar = it.next();
+			final FileSystem fs = jar.getFileSystem();
+			FSDataInputStream is = null;
+			try {
+				is = fs.open(jar);
+				final BlobKey key = BlobService.put(this.jobID, is, serverAddress);
+				this.userJarBlobKeys.add(key);
+				System.out.println("Added key " + key);
+			} finally {
+				if (is != null) {
+					is.close();
+				}
+			}
+		}
 	}
 
 	/**

@@ -19,15 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 import eu.stratosphere.nephele.deployment.TaskDeploymentDescriptor;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheManager;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheProfileRequest;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheProfileResponse;
-import eu.stratosphere.nephele.execution.librarycache.LibraryCacheUpdate;
 import eu.stratosphere.nephele.executiongraph.ExecutionVertexID;
 import eu.stratosphere.nephele.taskmanager.TaskKillResult;
 import eu.stratosphere.runtime.io.channels.ChannelID;
 import eu.stratosphere.nephele.ipc.RPC;
-import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.nephele.net.NetUtils;
 import eu.stratosphere.nephele.protocols.TaskOperationProtocol;
 import eu.stratosphere.nephele.taskmanager.TaskCancelResult;
@@ -37,7 +32,6 @@ import eu.stratosphere.nephele.topology.NetworkTopology;
 
 /**
  * An abstract instance represents a resource a {@link eu.stratosphere.nephele.taskmanager.TaskManager} runs on.
- * 
  */
 public abstract class AbstractInstance extends NetworkNode {
 
@@ -142,41 +136,6 @@ public abstract class AbstractInstance extends NetworkNode {
 	}
 
 	/**
-	 * Checks if all the libraries required to run the job with the given
-	 * job ID are available on this instance. Any libary that is missing
-	 * is transferred to the instance as a result of this call.
-	 * 
-	 * @param jobID
-	 *        the ID of the job whose libraries are to be checked for
-	 * @throws IOException
-	 *         thrown if an error occurs while checking for the libraries
-	 */
-	public synchronized void checkLibraryAvailability(final JobID jobID) throws IOException {
-
-		// Now distribute the required libraries for the job
-		String[] requiredLibraries = LibraryCacheManager.getRequiredJarFiles(jobID);
-
-		if (requiredLibraries == null) {
-			throw new IOException("No entry of required libraries for job " + jobID);
-		}
-
-		LibraryCacheProfileRequest request = new LibraryCacheProfileRequest();
-		request.setRequiredLibraries(requiredLibraries);
-
-		// Send the request
-		LibraryCacheProfileResponse response = null;
-		response = getTaskManagerProxy().getLibraryCacheProfile(request);
-
-		// Check response and transfer libraries if necessary
-		for (int k = 0; k < requiredLibraries.length; k++) {
-			if (!response.isCached(k)) {
-				LibraryCacheUpdate update = new LibraryCacheUpdate(requiredLibraries[k]);
-				getTaskManagerProxy().updateLibraryCache(update);
-			}
-		}
-	}
-
-	/**
 	 * Submits a list of tasks to the instance's {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
 	 * 
 	 * @param tasks
@@ -209,7 +168,7 @@ public abstract class AbstractInstance extends NetworkNode {
 	/**
 	 * Kills the task identified by the given ID at the instance's
 	 * {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
-	 *
+	 * 
 	 * @param id
 	 *        the ID identifying the task to be killed
 	 * @throws IOException
@@ -237,7 +196,6 @@ public abstract class AbstractInstance extends NetworkNode {
 
 		return this.instanceConnectionInfo.equals(abstractInstance.getInstanceConnectionInfo());
 	}
-
 
 	@Override
 	public int hashCode() {
