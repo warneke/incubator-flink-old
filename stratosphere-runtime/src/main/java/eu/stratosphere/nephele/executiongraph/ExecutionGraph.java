@@ -477,7 +477,7 @@ public class ExecutionGraph implements ExecutionListener {
 
 		// Calculate the cryptographic signature of this vertex
 		final ExecutionSignature signature = ExecutionSignature.createSignature(jobVertex.getInvokableClass(),
-			jobVertex.getJobGraph().getJobID());
+			this.requiredJarFiles);
 
 		// Create a group vertex for the job vertex
 
