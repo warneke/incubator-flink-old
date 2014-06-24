@@ -695,10 +695,8 @@ public class JobGraph implements IOReadableWritable {
 		for (int i = 0; i < numberOfBlobKeys; ++i) {
 			final BlobKey key = new BlobKey();
 			key.read(in);
-			System.out.println("Received " + key);
 			this.userJarBlobKeys.add(key);
 		}
-		System.out.println("NUMBER OF BLOB KEYS: " + numberOfBlobKeys);
 
 		// Register this job with the library cache manager
 		LibraryCacheManager.register(this.jobID, this.userJarBlobKeys);
@@ -730,7 +728,6 @@ public class JobGraph implements IOReadableWritable {
 				is = fs.open(jar);
 				final BlobKey key = BlobService.put(this.jobID, is, serverAddress);
 				this.userJarBlobKeys.add(key);
-				System.out.println("Added key " + key);
 			} finally {
 				if (is != null) {
 					is.close();

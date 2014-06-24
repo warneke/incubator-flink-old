@@ -177,9 +177,17 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	URL getURL(BlobKey key) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	URL getURL(final BlobKey key) throws IOException {
+
+		final File blob = getLocal(key);
+		if (blob == null) {
+			return null;
+		}
+
+		return blob.toURI().toURL();
 	}
 }
