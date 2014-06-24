@@ -18,9 +18,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import eu.stratosphere.runtime.io.api.RecordWriter;
+
 import org.junit.Test;
 
 import eu.stratosphere.core.io.StringRecord;
@@ -37,18 +39,18 @@ import eu.stratosphere.nephele.jobgraph.JobGraphDefinitionException;
 import eu.stratosphere.nephele.jobgraph.JobInputVertex;
 import eu.stratosphere.nephele.jobgraph.JobOutputVertex;
 import eu.stratosphere.nephele.jobmanager.scheduler.SchedulingException;
+import eu.stratosphere.nephele.services.blob.BlobKey;
 import eu.stratosphere.nephele.template.AbstractGenericInputTask;
 import eu.stratosphere.nephele.template.AbstractOutputTask;
 import eu.stratosphere.util.StringUtils;
 
 /**
- *         This class checks the functionality of the {@link QueueScheduler} class
+ * This class checks the functionality of the {@link QueueScheduler} class
  */
 public class QueueSchedulerTest {
 
 	/**
 	 * Test input task.
-	 * 
 	 */
 	public static final class InputTask extends AbstractGenericInputTask {
 
@@ -72,7 +74,6 @@ public class QueueSchedulerTest {
 
 	/**
 	 * Test output task.
-	 * 
 	 */
 	public static final class OutputTask extends AbstractOutputTask {
 
@@ -122,7 +123,8 @@ public class QueueSchedulerTest {
 		}
 
 		try {
-			LibraryCacheManager.register(jobGraph.getJobID(), new String[0]);
+			List<BlobKey> requiredJarFiles = Collections.emptyList();
+			LibraryCacheManager.register(jobGraph.getJobID(), requiredJarFiles);
 			return new ExecutionGraph(jobGraph, instanceManager);
 
 		} catch (GraphConversionException e) {
