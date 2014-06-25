@@ -95,7 +95,7 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 			// Close file stream and compute key
 			fos.close();
 			final BlobKey key = new BlobKey(md.digest());
-			tempFile.renameTo(new File(this.storageDirectory, key.toString()));
+			tempFile.renameTo(keyToFilename(key));
 			deleteTempFile = false;
 
 			return key;
@@ -145,6 +145,9 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 				LOG.debug(StringUtils.stringifyException(ie));
 			}
 		}
+
+		// Wipe the storage directory
+		super.shutdown();
 	}
 
 	/**

@@ -14,6 +14,8 @@ import eu.stratosphere.nephele.jobgraph.JobID;
 
 abstract class AbstractBaseImpl {
 
+	protected static final String BLOB_FILE_PREFIX = "blob_";
+
 	protected final File storageDirectory;
 
 	private final Random rnd = new Random();
@@ -31,7 +33,27 @@ abstract class AbstractBaseImpl {
 
 	abstract URL getURL(final BlobKey key) throws IOException;
 
-	abstract void shutdown();
+	/**
+	 * Shuts down the BLOB service
+	 */
+	void shutdown() {
+
+		// Wipe the storage directory
+		deleteStorageDirectory();
+	}
+
+	private void deleteStorageDirectory() {
+
+		final File[] files = this.storageDirectory.listFiles();
+		for (final File file : files) {
+
+			if (file.getName().startsWith(BLOB_FILE_PREFIX)) {
+				file.delete();
+			}
+		}
+
+		this.storageDirectory.delete();
+	}
 
 	private static File createStorageDirectory() {
 
@@ -129,9 +151,14 @@ abstract class AbstractBaseImpl {
 		return new JobID(buf);
 	}
 
+	protected File keyToFilename(final BlobKey key) {
+
+		return new File(this.storageDirectory, BLOB_FILE_PREFIX + key.toString());
+	}
+
 	protected File getLocal(final BlobKey key) throws IOException {
 
-		final File file = new File(this.storageDirectory, key.toString());
+		final File file = keyToFilename(key);
 		if (file.exists()) {
 			return file;
 		}

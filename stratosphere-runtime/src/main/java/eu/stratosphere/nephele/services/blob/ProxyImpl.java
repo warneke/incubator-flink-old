@@ -55,14 +55,6 @@ final class ProxyImpl extends AbstractBaseImpl {
 		return getFromServer(key);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	void shutdown() {
-		// TODO Wipe the storage directory
-	}
-
 	private InputStream getFromServer(final BlobKey key) throws IOException {
 
 		Socket socket = null;
