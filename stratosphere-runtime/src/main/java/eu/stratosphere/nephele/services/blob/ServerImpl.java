@@ -46,35 +46,106 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 		this.serverThread = new Thread(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	BlobKey put(final JobID jobID, final byte[] buf, final int offset, final int len) throws IOException {
 
-		// TODO Auto-generated method stub
-		return null;
+		final MessageDigest md = BlobService.getMessageDigest();
+		File tempFile = null;
+		FileOutputStream fos = null;
+
+		try {
+
+			tempFile = createTempFile();
+			fos = new FileOutputStream(tempFile);
+
+			md.update(buf, offset, len);
+			fos.write(buf, offset, len);
+
+			// Close file stream and compute key
+			fos.close();
+			fos = null;
+			final BlobKey key = new BlobKey(md.digest());
+			tempFile.renameTo(keyToFilename(key));
+			tempFile = null;
+
+			return key;
+
+		} finally {
+			if (fos != null) {
+				fos.close();
+			}
+			if (tempFile != null) {
+				tempFile.delete();
+			}
+		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	BlobKey put(final JobID jobID, final InputStream inputStream) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+
+		final MessageDigest md = BlobService.getMessageDigest();
+		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
+		File tempFile = null;
+		FileOutputStream fos = null;
+
+		try {
+
+			tempFile = createTempFile();
+			fos = new FileOutputStream(tempFile);
+
+			while (true) {
+
+				final int read = inputStream.read(buf);
+				if (read < 0) {
+					break;
+				}
+
+				md.update(buf);
+				fos.write(buf);
+			}
+
+			// Close file stream and compute key
+			fos.close();
+			fos = null;
+			final BlobKey key = new BlobKey(md.digest());
+			tempFile.renameTo(keyToFilename(key));
+			tempFile = null;
+
+			return key;
+
+		} finally {
+			if (fos != null) {
+				fos.close();
+			}
+			if (tempFile != null) {
+				tempFile.delete();
+			}
+		}
 	}
 
 	BlobKey putFromNetwork(final InputStream inputStream) throws IOException {
 
-		receiveJobID(inputStream);
+		BlobService.receiveJobID(inputStream);
 
 		final MessageDigest md = BlobService.getMessageDigest();
 		final byte[] buf = new byte[BlobService.TRANSFER_BUFFER_SIZE];
 		final byte[] lenBuf = new byte[4];
-
-		final File tempFile = createTempFile();
-		final FileOutputStream fos = new FileOutputStream(tempFile);
-		boolean deleteTempFile = true;
+		File tempFile = null;
+		FileOutputStream fos = null;
 		try {
+
+			tempFile = createTempFile();
+			fos = new FileOutputStream(tempFile);
 
 			while (true) {
 
-				final int bytesToReceive = readLength(lenBuf, inputStream);
+				final int bytesToReceive = BlobService.readLength(lenBuf, inputStream);
 				if (bytesToReceive < 0) {
 					break;
 				}
@@ -94,19 +165,21 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 
 			// Close file stream and compute key
 			fos.close();
+			fos = null;
 			final BlobKey key = new BlobKey(md.digest());
 			tempFile.renameTo(keyToFilename(key));
-			deleteTempFile = false;
+			tempFile = null;
 
 			return key;
 
 		} finally {
-			fos.close();
-			if (deleteTempFile) {
+			if (fos != null) {
+				fos.close();
+			}
+			if (tempFile != null) {
 				tempFile.delete();
 			}
 		}
-
 	}
 
 	/**

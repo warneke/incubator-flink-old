@@ -1,5 +1,6 @@
 package eu.stratosphere.nephele.services.blob;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -171,6 +172,15 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Auxiliary method to finish a PUT operation over the network.
+	 * 
+	 * @param inputStream
+	 *        the input stream to read the verification BLOB key from.
+	 * @return the server's BLOB key of the uploaded BLOB for verification
+	 * @throws IOException
+	 *         thrown if an I/O error occurs during the data transfer
+	 */
 	private static final BlobKey finishPut(final InputStream inputStream) throws IOException {
 
 		final BlobKey key = BlobKey.readFromInputStream(inputStream);
@@ -183,6 +193,12 @@ public final class BlobService {
 		return key;
 	}
 
+	/**
+	 * Auxiliary method to silently close a network socket.
+	 * 
+	 * @param socket
+	 *        the network socket to close, possibly <code>null</code>
+	 */
 	static void closeSilently(final Socket socket) {
 
 		if (socket != null) {
@@ -193,6 +209,18 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Auxiliary method to write the length of an upcoming data chunk to an output stream.
+	 * 
+	 * @param length
+	 *        the length of the upcoming data chunk in bytes
+	 * @param buf
+	 *        the byte buffer to use for the integer serialization
+	 * @param outputStream
+	 *        the output stream to write the length to
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while writing to the output stream
+	 */
 	private static void writeLength(final int length, final byte[] buf, final OutputStream outputStream)
 			throws IOException {
 
@@ -204,7 +232,47 @@ public final class BlobService {
 		outputStream.write(buf);
 	}
 
-	private static void sendJobID(final JobID jobID, final OutputStream outputStream) throws IOException {
+	/**
+	 * Auxiliary method to read the length of an upcoming data chunk from an input stream.
+	 * 
+	 * @param buf
+	 *        the byte buffer to use for the integer deserialization
+	 * @param inputStream
+	 *        the input stream to read the length from
+	 * @return the length of the upcoming data chunk in bytes
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while reading from the input stream
+	 */
+	static int readLength(final byte[] buf, final InputStream inputStream) throws IOException {
+
+		int bytesRead = 0;
+		while (bytesRead < 4) {
+			final int read = inputStream.read(buf, bytesRead, 4 - bytesRead);
+			if (read < 0) {
+				throw new EOFException();
+			}
+			bytesRead += read;
+		}
+
+		bytesRead = buf[0] & 0xff;
+		bytesRead |= (buf[1] & 0xff) << 8;
+		bytesRead |= (buf[2] & 0xff) << 16;
+		bytesRead |= (buf[3] & 0xff) << 24;
+
+		return bytesRead;
+	}
+
+	/**
+	 * Auxiliary method to write a {@link JobID} to an output stream.
+	 * 
+	 * @param jobID
+	 *        the job ID to write, possibly <code>null</code>
+	 * @param outputStream
+	 *        the output stream to write the ID to
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while writing the ID
+	 */
+	static void sendJobID(final JobID jobID, final OutputStream outputStream) throws IOException {
 
 		if (jobID == null) {
 			// Write 0 to indicate no job ID is following
@@ -221,6 +289,37 @@ public final class BlobService {
 	}
 
 	/**
+	 * Auxiliary method to read a {@link JobID} from an input stream.
+	 * 
+	 * @param inputStream
+	 *        the input stream to read the job ID from
+	 * @return the read job ID, possibly <code>null</code>
+	 * @throws IOException
+	 *         throw if an I/O error occurs while reading the ID
+	 */
+	static JobID receiveJobID(final InputStream inputStream) throws IOException {
+
+		int read = inputStream.read();
+		if (read < 0) {
+			throw new EOFException();
+		} else if (read == 0) {
+			return null;
+		}
+
+		final byte[] buf = new byte[JobID.SIZE];
+		int bytesRead = 0;
+		while (bytesRead < JobID.SIZE) {
+			read = inputStream.read(buf, bytesRead, JobID.SIZE - bytesRead);
+			if (read < 0) {
+				throw new EOFException();
+			}
+			bytesRead += read;
+		}
+
+		return new JobID(buf);
+	}
+
+	/**
 	 * Returns an instance of the message digest to use for the BLOB key computation.
 	 * 
 	 * @return an instance of the message digest to use for the BLOB key computation
@@ -234,16 +333,44 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Opens an input stream to the BLOB with the given key. Calling this method requires previous initialization of the
+	 * BLOB service.
+	 * 
+	 * @param key
+	 *        the key of the BLOB to retrieve
+	 * @return an input stream to the BLOB with the given key
+	 * @throws FileNotFoundException
+	 *         thrown if the BLOB with the given key could not be found
+	 * @throws IOException
+	 *         thrown if an error occurs during the BLOB transfer
+	 */
 	public static InputStream get(final BlobKey key) throws IOException {
 
 		return get().get(key);
 	}
 
+	/**
+	 * Returns the URL of the BLOB with the given key. Calling this method requires previous initialization of the
+	 * BLOB service.
+	 * 
+	 * @param key
+	 *        the key of the BLOB to retrieve
+	 * @return the URL of the BLOB with the given key
+	 * @throws FileNotFoundException
+	 *         thrown if the BLOB with the given key could not be found
+	 * @throws IOException
+	 *         thrown if an error occurs during the BLOB transfer
+	 */
 	public static URL getURL(final BlobKey key) throws IOException {
 
 		return get().getURL(key);
 	}
 
+	/**
+	 * Shuts down the BLOB service, closes all open network ports and deletes the BLOB storage or cache, respectively.
+	 * Calling this method requires previous initialization of the BLOB service.
+	 */
 	public static void shutdown() {
 
 		get().shutdown();

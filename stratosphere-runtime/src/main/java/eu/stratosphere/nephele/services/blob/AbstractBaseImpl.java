@@ -1,6 +1,5 @@
 package eu.stratosphere.nephele.services.blob;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,53 +109,26 @@ abstract class AbstractBaseImpl {
 		return 0;
 	}
 
-	protected static int readLength(final byte[] buf, final InputStream inputStream) throws IOException {
-
-		int bytesRead = 0;
-		while (bytesRead < 4) {
-			final int read = inputStream.read(buf, bytesRead, 4 - bytesRead);
-			if (read < 0) {
-				throw new EOFException();
-			}
-			bytesRead += read;
-		}
-
-		bytesRead = buf[0] & 0xff;
-		bytesRead |= (buf[1] & 0xff) << 8;
-		bytesRead |= (buf[2] & 0xff) << 16;
-		bytesRead |= (buf[3] & 0xff) << 24;
-
-		return bytesRead;
-	}
-
-	protected static JobID receiveJobID(final InputStream inputStream) throws IOException {
-
-		int read = inputStream.read();
-		if (read < 0) {
-			throw new EOFException();
-		} else if (read == 0) {
-			return null;
-		}
-
-		final byte[] buf = new byte[JobID.SIZE];
-		int bytesRead = 0;
-		while (bytesRead < JobID.SIZE) {
-			read = inputStream.read(buf, bytesRead, JobID.SIZE - bytesRead);
-			if (read < 0) {
-				throw new EOFException();
-			}
-			bytesRead += read;
-		}
-
-		return new JobID(buf);
-	}
-
+	/**
+	 * Converts the key of a BLOB into it's designated storage location.
+	 * 
+	 * @param key
+	 *        the key of the BLOB
+	 * @return the BLOB's designated storage location
+	 */
 	protected File keyToFilename(final BlobKey key) {
 
 		return new File(this.storageDirectory, BLOB_FILE_PREFIX + key.toString());
 	}
 
-	protected File getLocal(final BlobKey key) throws IOException {
+	/**
+	 * Checks if the BLOB with the given key exists in the local BLOB cache.
+	 * 
+	 * @param key
+	 *        the key of the BLOB to return
+	 * @return the filename of the BLOB with the given key, <code>null</code> if it could not be found
+	 */
+	protected File getLocal(final BlobKey key) {
 
 		final File file = keyToFilename(key);
 		if (file.exists()) {
