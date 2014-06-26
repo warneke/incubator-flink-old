@@ -1,3 +1,16 @@
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2013 by the Stratosphere project (http://stratosphere.eu)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
+
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.EOFException;
@@ -19,6 +32,12 @@ import org.apache.commons.logging.LogFactory;
 import eu.stratosphere.nephele.jobgraph.JobID;
 import eu.stratosphere.util.StringUtils;
 
+/**
+ * This class implements the server component of the BLOB service. Besides the basic file cache it serves put and get
+ * requests to clients over the network.
+ * <p>
+ * This class is thread-safe.
+ */
 final class ServerImpl extends AbstractBaseImpl implements Runnable {
 
 	/**
@@ -31,13 +50,24 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 	 */
 	private final ServerSocket serverSocket;
 
+	/**
+	 * The thread listening for incoming network connections.
+	 */
 	private final Thread serverThread;
 
 	/**
-	 * Indicates whether a shutdown of the BLOB manager has been requested.
+	 * Indicates whether a shutdown of server component has been requested.
 	 */
-	private volatile boolean shutdownRequested = false; // TODO: Reconsider this design
+	private volatile boolean shutdownRequested = false;
 
+	/**
+	 * Constructs a new server component of the BLOB service.
+	 * 
+	 * @param socketAddress
+	 *        the socket address the server shall listen on
+	 * @throws IOException
+	 *         thrown if an error occurs while binding/initializing the server socket
+	 */
 	ServerImpl(final InetSocketAddress socketAddress) throws IOException {
 		super();
 
@@ -130,6 +160,15 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 		}
 	}
 
+	/**
+	 * Stores data in a BLOB from an incoming network connection.
+	 * 
+	 * @param inputStream
+	 *        the input stream to read the data from
+	 * @return the key of stored BLOB
+	 * @throws IOException
+	 *         throw if an I/O error occurs during the data transfer
+	 */
 	BlobKey putFromNetwork(final InputStream inputStream) throws IOException {
 
 		BlobService.receiveJobID(inputStream);
@@ -245,6 +284,9 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 		}
 	}
 
+	/**
+	 * Starts the thread listening for incoming network connections.
+	 */
 	void start() {
 
 		this.serverThread.start();

@@ -1,3 +1,16 @@
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2013 by the Stratosphere project (http://stratosphere.eu)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
+
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.DataInput;
@@ -11,18 +24,39 @@ import java.util.Arrays;
 
 import eu.stratosphere.core.io.IOReadableWritable;
 
+/**
+ * A BLOB key uniquely identifies a BLOB.
+ */
 public final class BlobKey implements IOReadableWritable, Comparable<BlobKey> {
 
+	/**
+	 * Array of hex characters to facilitate fast toString() method.
+	 */
 	private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
+	/**
+	 * Size of the internal BLOB key in bytes.
+	 */
 	private static final int SIZE = 20;
 
+	/**
+	 * The byte buffer storing the actual key data.
+	 */
 	private final byte[] key;
 
+	/**
+	 * Constructs a new BLOB key.
+	 */
 	public BlobKey() {
 		this.key = new byte[SIZE];
 	}
 
+	/**
+	 * Constructs a new BLOB key from the given byte array.
+	 * 
+	 * @param key
+	 *        the actual key data
+	 */
 	BlobKey(final byte[] key) {
 
 		if (key.length != SIZE) {
@@ -87,6 +121,15 @@ public final class BlobKey implements IOReadableWritable, Comparable<BlobKey> {
 		return new String(hexChars);
 	}
 
+	/**
+	 * Auxiliary method to read a BLOB key from an input stream.
+	 * 
+	 * @param inputStream
+	 *        the input stream to read the BLOB key from
+	 * @return the read BLOB key
+	 * @throws IOException
+	 *         throw if an I/O error occurs while reading from the input stream
+	 */
 	static BlobKey readFromInputStream(final InputStream inputStream) throws IOException {
 
 		final byte[] key = new byte[BlobKey.SIZE];
@@ -103,6 +146,14 @@ public final class BlobKey implements IOReadableWritable, Comparable<BlobKey> {
 		return new BlobKey(key);
 	}
 
+	/**
+	 * Auxiliary method to write this BLOB key to an output stream.
+	 * 
+	 * @param outputStream
+	 *        the output stream to write the BLOB key to
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while writing the BLOB key
+	 */
 	void writeToOutputStream(final OutputStream outputStream) throws IOException {
 
 		outputStream.write(this.key);
@@ -129,6 +180,12 @@ public final class BlobKey implements IOReadableWritable, Comparable<BlobKey> {
 		return aarr.length - barr.length;
 	}
 
+	/**
+	 * Adds the BLOB key to the given {@link MessageDigest}.
+	 * 
+	 * @param md
+	 *        the message digest to add the BLOB key to
+	 */
 	public void addToMessageDigest(final MessageDigest md) {
 
 		md.update(this.key);

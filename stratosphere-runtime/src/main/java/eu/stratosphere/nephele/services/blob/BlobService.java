@@ -1,3 +1,16 @@
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2013 by the Stratosphere project (http://stratosphere.eu)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
+
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.EOFException;
@@ -15,12 +28,30 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import eu.stratosphere.nephele.jobgraph.JobID;
 
+/**
+ * This class implements a BLOB service. The BLOB service can be used to centrally store and retrieve BLOBs in a
+ * distributed environment. The service can be used in both a stateless and a stateful manner. When running in stateful
+ * mode, the service will either act as a central server or proxy component. The server component is considered the
+ * local data store. Proxy components download BLOBs from the server component when needed, however try to serve get
+ * requests from their local caches whenever possible.
+ * <p>
+ * This class is thread-safe.
+ */
 public final class BlobService {
 
+	/**
+	 * The maximum size of a data chunk during network transfers in bytes.
+	 */
 	static final int TRANSFER_BUFFER_SIZE = 4096;
 
+	/**
+	 * The status code of a put operation.
+	 */
 	static final byte PUT_OPERATION = 0;
 
+	/**
+	 * The status code of a get operation.
+	 */
 	static final byte GET_OPERATION = 1;
 
 	/**
@@ -28,13 +59,25 @@ public final class BlobService {
 	 */
 	private static final String HASHING_ALGORITHM = "SHA-1";
 
+	/**
+	 * Atomic reference used to point either the server or proxy component in stateful mode.
+	 */
 	private static final AtomicReference<AbstractBaseImpl> BLOB_SERVICE_IMPL = new AtomicReference<AbstractBaseImpl>(
 		null);
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
 	private BlobService() {
 	}
 
-	public static void initProxy(final InetSocketAddress serverAddress) throws IOException {
+	/**
+	 * Initializes the BLOB service in proxy mode.
+	 * 
+	 * @param serverAddress
+	 *        the address of the BLOB service's server component.
+	 */
+	public static void initProxy(final InetSocketAddress serverAddress) {
 
 		while (true) {
 
@@ -49,6 +92,12 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Initializes the BLOB service in server mode.
+	 * 
+	 * @param socketAddress
+	 *        the socket address the server compoment shall listen on for incoming network connections
+	 */
 	public static void initServer(final InetSocketAddress socketAddress) throws IOException {
 
 		while (true) {
@@ -65,6 +114,11 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Retrieves the singleton instance of the BLOB service.
+	 * 
+	 * @return the singleton instance of the BLOB service
+	 */
 	private static AbstractBaseImpl get() {
 
 		final AbstractBaseImpl impl = BLOB_SERVICE_IMPL.get();
@@ -75,21 +129,76 @@ public final class BlobService {
 		return impl;
 	}
 
+	/**
+	 * Stores the given byte buffer. Calling this method requires previous initialization of the BLOB service.
+	 * 
+	 * @param jobID
+	 *        the ID of the job the byte buffer belongs to
+	 * @param buf
+	 *        the byte buffer to store
+	 * @return the BLOB key identifying the stored byte buffer
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while storing the data
+	 */
 	public static BlobKey put(final JobID jobID, final byte[] buf) throws IOException {
 
 		return get().put(jobID, buf, 0, buf.length);
 	}
 
+	/**
+	 * Stores the given byte buffer. Calling this method requires previous initialization of the BLOB service.
+	 * 
+	 * @param jobID
+	 *        the ID of the job the byte buffer belongs to
+	 * @param buf
+	 *        the byte buffer to store
+	 * @param offset
+	 *        the offset in the byte buffer
+	 * @param len
+	 *        the number of bytes to read from the byte buffer
+	 * @return the BLOB key identifying the stored byte buffer
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while storing the data
+	 */
 	public static BlobKey put(final JobID jobID, final byte[] buf, final int offset, final int len) throws IOException {
 
 		return get().put(jobID, buf, offset, len);
 	}
 
+	/**
+	 * Reads the data from the given input stream and stores it. Calling this method requires previous initialization of
+	 * the BLOB service.
+	 * 
+	 * @param jobID
+	 *        the ID of the job the data to store belong to
+	 * @param inputStream
+	 *        the input stream to read the data from
+	 * @return the BLOB key identifying the stored data
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while storing the data
+	 */
 	public static BlobKey put(final JobID jobID, final InputStream inputStream) throws IOException {
 
 		return get().put(jobID, inputStream);
 	}
 
+	/**
+	 * Stores the given byte buffer.
+	 * 
+	 * @param jobID
+	 *        the ID of the job the byte buffer belongs to
+	 * @param buf
+	 *        the byte buffer to store
+	 * @param offset
+	 *        the offset in the byte buffer
+	 * @param len
+	 *        the number of bytes to read from the byte buffer
+	 * @param serverAddr
+	 *        the address of the server component
+	 * @return the BLOB key identifying the stored byte buffer
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while storing the data
+	 */
 	public static BlobKey put(final JobID jobID, final byte[] buf, final int offset, final int len,
 			final InetSocketAddress serverAddr) throws IOException {
 
@@ -130,6 +239,19 @@ public final class BlobService {
 		}
 	}
 
+	/**
+	 * Reads the data from the given input stream and stores it.
+	 * 
+	 * @param jobID
+	 *        the ID of the job the data to store belong to
+	 * @param inputStream
+	 *        the input stream to read the data from
+	 * @param serverAddr
+	 *        the address of the server component
+	 * @return the BLOB key identifying the stored data
+	 * @throws IOException
+	 *         thrown if an I/O error occurs while storing the data
+	 */
 	public static BlobKey put(final JobID jobID, final InputStream inputStream, final InetSocketAddress serverAddr)
 			throws IOException {
 
@@ -351,6 +473,19 @@ public final class BlobService {
 		return get().get(key);
 	}
 
+	/**
+	 * Opens an input stream to the BLOB with the given key.
+	 * 
+	 * @param key
+	 *        the key of the BLOB to retrieve
+	 * @param serverAddr
+	 *        the address of the server component to retrieve the data from
+	 * @return an input stream to the BLOB with the given key
+	 * @throws FileNotFoundException
+	 *         thrown if the BLOB with the given key could not be found
+	 * @throws IOException
+	 *         thrown if an error occurs during the BLOB transfer
+	 */
 	public static InputStream get(final BlobKey key, final InetSocketAddress serverAddr) throws IOException {
 
 		Socket socket = null;

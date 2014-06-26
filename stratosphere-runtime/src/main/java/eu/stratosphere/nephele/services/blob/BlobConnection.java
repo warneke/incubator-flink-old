@@ -1,3 +1,16 @@
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2013 by the Stratosphere project (http://stratosphere.eu)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
+
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.IOException;
@@ -10,6 +23,11 @@ import org.apache.commons.logging.LogFactory;
 
 import eu.stratosphere.util.StringUtils;
 
+/**
+ * This class handles incoming network connections for the BLOB service's server component.
+ * <p>
+ * This class is thread-safe.
+ */
 final class BlobConnection extends Thread {
 
 	/**
@@ -17,10 +35,24 @@ final class BlobConnection extends Thread {
 	 */
 	private static final Log LOG = LogFactory.getLog(BlobConnection.class);
 
+	/**
+	 * The BLOB service's server component.
+	 */
 	private final ServerImpl blobServer;
 
+	/**
+	 * The socket to use for communication.
+	 */
 	private final Socket socket;
 
+	/**
+	 * Constructs a new connection object.
+	 * 
+	 * @param blobServer
+	 *        the BLOB service's server component
+	 * @param socket
+	 *        the socket to use for communication
+	 */
 	BlobConnection(final ServerImpl blobServer, final Socket socket) {
 		super("BLOB connection from " + socket.getRemoteSocketAddress());
 
@@ -66,6 +98,16 @@ final class BlobConnection extends Thread {
 		}
 	}
 
+	/**
+	 * Handles a client's put request.
+	 * 
+	 * @param inputStream
+	 *        the input stream of the socket
+	 * @param outputStream
+	 *        the output stream of the socket
+	 * @throws IOException
+	 *         thrown if an I/O error occurs during the data transfer
+	 */
 	private void put(final InputStream inputStream, final OutputStream outputStream) throws IOException {
 
 		final BlobKey key = this.blobServer.putFromNetwork(inputStream);
@@ -74,6 +116,16 @@ final class BlobConnection extends Thread {
 		key.writeToOutputStream(outputStream);
 	}
 
+	/**
+	 * Handles a client's get request.
+	 * 
+	 * @param inputStream
+	 *        the input stream of the socket
+	 * @param outputStream
+	 *        the output stream of the socket
+	 * @throws IOException
+	 *         thrown if an I/O error occurs during the data transfer
+	 */
 	private void get(final InputStream inputStream, final OutputStream outputStream) throws IOException {
 
 		// Receive the blob key
