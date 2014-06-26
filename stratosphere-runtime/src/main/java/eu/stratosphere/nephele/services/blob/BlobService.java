@@ -1,6 +1,7 @@
 package eu.stratosphere.nephele.services.blob;
 
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -348,6 +349,34 @@ public final class BlobService {
 	public static InputStream get(final BlobKey key) throws IOException {
 
 		return get().get(key);
+	}
+
+	public static InputStream get(final BlobKey key, final InetSocketAddress serverAddr) throws IOException {
+
+		Socket socket = null;
+		int status = 0;
+		try {
+			socket = new Socket(serverAddr.getAddress(), serverAddr.getPort());
+			final OutputStream os = socket.getOutputStream();
+			os.write(BlobService.GET_OPERATION);
+			key.writeToOutputStream(os);
+			os.flush();
+
+			final InputStream is = socket.getInputStream();
+			status = is.read();
+			if (status < 0) {
+				throw new EOFException();
+			} else if (status == 0) {
+				throw new FileNotFoundException();
+			}
+
+			return is;
+
+		} finally {
+			if (status <= 0) {
+				closeSilently(socket);
+			}
+		}
 	}
 
 	/**

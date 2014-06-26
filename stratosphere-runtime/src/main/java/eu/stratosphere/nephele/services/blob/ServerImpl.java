@@ -3,6 +3,7 @@ package eu.stratosphere.nephele.services.blob;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -189,11 +190,11 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 	InputStream get(final BlobKey key) throws IOException {
 
 		final File blob = getLocal(key);
-		if (blob != null) {
-			return new FileInputStream(blob);
+		if (blob == null) {
+			throw new FileNotFoundException();
 		}
 
-		return null;
+		return new FileInputStream(blob);
 	}
 
 	/**
@@ -261,7 +262,7 @@ final class ServerImpl extends AbstractBaseImpl implements Runnable {
 
 		final File blob = getLocal(key);
 		if (blob == null) {
-			return null;
+			throw new FileNotFoundException();
 		}
 
 		return blob.toURI().toURL();
