@@ -13,6 +13,7 @@
 
 package eu.stratosphere.nephele.services.blob;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -131,8 +132,10 @@ final class BlobConnection extends Thread {
 		// Receive the blob key
 		final BlobKey key = BlobKey.readFromInputStream(inputStream);
 
-		final InputStream fis = this.blobServer.get(key);
-		if (fis == null) {
+		final InputStream fis;
+		try {
+			fis = this.blobServer.get(key);
+		} catch(FileNotFoundException fnfe) {
 			outputStream.write(0);
 			return;
 		}

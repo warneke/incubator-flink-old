@@ -536,7 +536,10 @@ public final class BlobService {
 	 * Calling this method requires previous initialization of the BLOB service.
 	 */
 	public static void shutdown() {
-
-		get().shutdown();
+		
+		final AbstractBaseImpl impl = BLOB_SERVICE_IMPL.getAndSet(null);
+		if(impl != null) {
+			impl.shutdown();
+		}
 	}
 }
