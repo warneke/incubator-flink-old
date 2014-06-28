@@ -15,7 +15,7 @@ package eu.stratosphere.pact.runtime.sort;
 
 import java.util.Comparator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -13,8 +13,7 @@
 
 package eu.stratosphere.types;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.core.memory.MemorySegment;

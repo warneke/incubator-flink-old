@@ -16,7 +16,7 @@ package eu.stratosphere.pact.runtime.io;
 import java.io.EOFException;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.After;
 import org.junit.Before;

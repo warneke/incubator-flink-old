@@ -21,7 +21,7 @@ import eu.stratosphere.api.java.io.AvroOutputFormat;
 import eu.stratosphere.api.java.record.io.avro.example.User;
 import eu.stratosphere.api.java.tuple.Tuple3;
 import eu.stratosphere.test.util.JavaProgramTestBase;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.reflect.ReflectDatumReader;

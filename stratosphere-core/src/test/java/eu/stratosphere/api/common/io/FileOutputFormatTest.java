@@ -16,8 +16,7 @@ package eu.stratosphere.api.common.io;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

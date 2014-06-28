@@ -20,7 +20,7 @@ import eu.stratosphere.runtime.io.channels.ChannelID;
 import eu.stratosphere.runtime.io.network.Envelope;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;

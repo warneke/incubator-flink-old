@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -155,7 +153,7 @@ public class CsvOutputFormatTest {
 			assertTrue(validConfig);
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -202,7 +200,7 @@ public class CsvOutputFormatTest {
 			}
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -248,7 +246,7 @@ public class CsvOutputFormatTest {
 			assertFalse(success);
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -296,7 +294,7 @@ public class CsvOutputFormatTest {
 			}
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -347,7 +345,7 @@ public class CsvOutputFormatTest {
 			}
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -398,7 +396,7 @@ public class CsvOutputFormatTest {
 			assertFalse(success);
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 	
@@ -451,7 +449,7 @@ public class CsvOutputFormatTest {
 			}
 		}
 		catch (Exception ex) {
-			Assert.fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			fail("Test failed due to a " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 		}
 	}
 		

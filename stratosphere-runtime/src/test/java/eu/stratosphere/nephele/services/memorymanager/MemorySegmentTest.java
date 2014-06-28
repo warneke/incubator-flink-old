@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Random;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.After;
 import org.junit.Before;

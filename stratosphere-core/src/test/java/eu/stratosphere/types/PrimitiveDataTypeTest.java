@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class PrimitiveDataTypeTest {
 	public void testDoubleValue() {
 		DoubleValue double0 = new DoubleValue(10.2);
 		// test value retrieval
-		Assert.assertEquals(10.2, double0.getValue());
+		Assert.assertEquals(10.2, double0.getValue(), 0.0001);
 		// test value comparison
 		DoubleValue double1 = new DoubleValue(10.2);
 		DoubleValue double2 = new DoubleValue(-10.5);
@@ -102,11 +102,11 @@ public class PrimitiveDataTypeTest {
 			double2n.read(mIn);
 			double3n.read(mIn);
 			Assert.assertEquals(double0.compareTo(double1n), 0);
-			Assert.assertEquals(double0.getValue(), double1n.getValue());
+			Assert.assertEquals(double0.getValue(), double1n.getValue(), 0.0001);
 			Assert.assertEquals(double2.compareTo(double2n), 0);
-			Assert.assertEquals(double2.getValue(), double2n.getValue());
+			Assert.assertEquals(double2.getValue(), double2n.getValue(), 0.0001);
 			Assert.assertEquals(double3.compareTo(double3n), 0);
-			Assert.assertEquals(double3.getValue(), double3n.getValue());
+			Assert.assertEquals(double3.getValue(), double3n.getValue(), 0.0001);
 		} catch (Exception e) {
 			Assert.assertTrue(false);
 		}

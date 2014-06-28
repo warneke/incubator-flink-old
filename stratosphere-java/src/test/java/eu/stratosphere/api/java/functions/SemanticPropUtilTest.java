@@ -23,8 +23,8 @@ import eu.stratosphere.api.java.tuple.Tuple5;
 import eu.stratosphere.api.java.typeutils.BasicTypeInfo;
 import eu.stratosphere.api.java.typeutils.TupleTypeInfo;
 import eu.stratosphere.types.TypeInformation;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SemanticPropUtilTest {

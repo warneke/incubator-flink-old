@@ -16,8 +16,7 @@ package eu.stratosphere.pact.runtime.task;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.api.common.functions.GenericCoGrouper;

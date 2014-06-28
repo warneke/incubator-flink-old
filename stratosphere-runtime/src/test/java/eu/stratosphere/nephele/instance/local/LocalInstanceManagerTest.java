@@ -14,8 +14,8 @@
 package eu.stratosphere.nephele.instance.local;
 
 import eu.stratosphere.nephele.instance.InstanceManager;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.nephele.ExecutionMode;

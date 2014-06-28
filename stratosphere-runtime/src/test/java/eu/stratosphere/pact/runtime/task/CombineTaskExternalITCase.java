@@ -16,8 +16,7 @@ package eu.stratosphere.pact.runtime.task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.api.common.functions.GenericGroupReduce;

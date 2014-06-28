@@ -18,7 +18,7 @@ import eu.stratosphere.runtime.io.channels.ChannelID;
 import eu.stratosphere.runtime.io.network.ChannelManager;
 import eu.stratosphere.runtime.io.network.Envelope;
 import eu.stratosphere.runtime.io.network.RemoteReceiver;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;

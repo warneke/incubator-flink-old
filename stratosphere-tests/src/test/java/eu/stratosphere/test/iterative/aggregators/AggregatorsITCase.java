@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

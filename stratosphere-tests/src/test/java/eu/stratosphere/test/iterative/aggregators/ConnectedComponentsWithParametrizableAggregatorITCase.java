@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import eu.stratosphere.api.common.aggregators.LongSumAggregator;
 import eu.stratosphere.api.java.DataSet;

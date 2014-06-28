@@ -13,8 +13,7 @@
 
 package eu.stratosphere.pact.runtime.task;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.api.common.functions.GenericJoiner;

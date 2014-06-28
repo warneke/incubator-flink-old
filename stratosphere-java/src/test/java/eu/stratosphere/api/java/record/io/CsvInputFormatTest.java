@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.log4j.Level;
 import org.junit.After;

@@ -13,7 +13,7 @@
 
 package eu.stratosphere.pact.runtime.test.util;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import eu.stratosphere.nephele.template.AbstractInvokable;
 
 public class TaskCancelThread extends Thread

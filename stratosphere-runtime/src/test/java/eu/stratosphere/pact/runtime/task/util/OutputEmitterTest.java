@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.api.common.typeutils.TypeComparator;

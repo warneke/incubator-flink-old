@@ -13,8 +13,7 @@
 
 package eu.stratosphere.pact.compiler;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.stratosphere.api.common.Plan;

@@ -19,7 +19,7 @@ import eu.stratosphere.runtime.io.serialization.RecordDeserializer.Deserializati
 import eu.stratosphere.runtime.io.serialization.types.SerializationTestType;
 import eu.stratosphere.runtime.io.serialization.types.SerializationTestTypeFactory;
 import eu.stratosphere.runtime.io.serialization.types.Util;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayDeque;
