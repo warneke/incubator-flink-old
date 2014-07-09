@@ -83,9 +83,9 @@ public abstract class AbstractInvokable {
 	}
 
 	/**
-	 * Returns the task configuration object which was attached to the original {@link JobVertex}.
+	 * Returns the task configuration object which was attached to the original {@link eu.stratosphere.nephele.jobgraph.AbstractJobVertex}.
 	 * 
-	 * @return the task configuration object which was attached to the original {@link JobVertex}
+	 * @return the task configuration object which was attached to the original {@link eu.stratosphere.nephele.jobgraph.AbstractJobVertex}
 	 */
 	public final Configuration getTaskConfiguration() {
 
@@ -93,9 +93,9 @@ public abstract class AbstractInvokable {
 	}
 
 	/**
-	 * Returns the job configuration object which was attached to the original {@link JobGraph}.
+	 * Returns the job configuration object which was attached to the original {@link eu.stratosphere.nephele.jobgraph.JobGraph}.
 	 * 
-	 * @return the job configuration object which was attached to the original {@link JobGraph}
+	 * @return the job configuration object which was attached to the original {@link eu.stratosphere.nephele.jobgraph.JobGraph}
 	 */
 	public final Configuration getJobConfiguration() {
 

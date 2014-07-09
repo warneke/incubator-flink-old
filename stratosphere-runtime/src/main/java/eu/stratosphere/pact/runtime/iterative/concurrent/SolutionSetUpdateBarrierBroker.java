@@ -14,8 +14,9 @@
 package eu.stratosphere.pact.runtime.iterative.concurrent;
 
 /**
- * Broker to hand over {@link SolutionSetUpdateBarrier} from {@link IterationHeadPactTask} to
- * {@link IterationTailPactTask}.
+ * Broker to hand over {@link SolutionSetUpdateBarrier} from
+ * {@link eu.stratosphere.pact.runtime.iterative.task.IterationHeadPactTask} to
+ * {@link eu.stratosphere.pact.runtime.iterative.task.IterationTailPactTask}.
  */
 public class SolutionSetUpdateBarrierBroker extends Broker<SolutionSetUpdateBarrier> {
 

@@ -239,7 +239,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 	 * @param maxNumFileHandles The maximum number of files to be merged at once.
 	 * @param startSpillingFraction The faction of the buffers that have to be filled before the spilling thread
 	 *                              actually begins spilling data to disk.
-	 * @param noSpilling When set to true, no memory will be allocated for writing and no spilling thread
+	 * @param noSpillingMemory When set to true, no memory will be allocated for writing and no spilling thread
 	 *                   will be spawned.
 	 * 
 	 * @throws IOException Thrown, if an error occurs initializing the resources for external sorting.
@@ -1171,7 +1171,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		 * @param exceptionHandler The exception handler to call for all exceptions.
 		 * @param queues The queues used to pass buffers between the threads.
 		 * @param parentTask The task that started this thread. If non-null, it is used to register this thread.
-		 * @param memoryManager The memory manager used to allocate buffers for the readers and writers.
+		 * @param memManager The memory manager used to allocate buffers for the readers and writers.
 		 * @param ioManager The I/I manager used to instantiate readers and writers from.
 		 * @param serializer
 		 * @param comparator
@@ -1549,7 +1549,6 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		 * @param memory A list containing the memory buffers to be distributed. The buffers are not
 		 *               removed from this list.
 		 * @param numChannels The number of channels for which to allocate buffers. Must not be zero.
-		 * @return A list with all memory segments that were allocated.
 		 */
 		protected final void getSegmentsForReaders(List<List<MemorySegment>> target,
 			List<MemorySegment> memory, int numChannels)
@@ -1587,7 +1586,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		/**
 		 * Adds a channel to the list of channels that are to be removed at shutdown.
 		 * 
-		 * @param s The channel id.
+		 * @param channel The channel id.
 		 */
 		protected void registerChannelToBeRemovedAtShudown(Channel.ID channel) {
 			UnilateralSortMerger.this.channelsToDeleteAtShutdown.add(channel);
@@ -1596,7 +1595,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		/**
 		 * Removes a channel from the list of channels that are to be removed at shutdown.
 		 * 
-		 * @param s The channel id.
+		 * @param channel The channel id.
 		 */
 		protected void unregisterChannelToBeRemovedAtShudown(Channel.ID channel) {
 			UnilateralSortMerger.this.channelsToDeleteAtShutdown.remove(channel);
@@ -1605,7 +1604,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		/**
 		 * Adds a channel reader/writer to the list of channels that are to be removed at shutdown.
 		 * 
-		 * @param s The channel reader/writer.
+		 * @param channel The channel reader/writer.
 		 */
 		protected void registerOpenChannelToBeRemovedAtShudown(BlockChannelAccess<?, ?> channel) {
 			UnilateralSortMerger.this.openChannels.add(channel);
@@ -1614,7 +1613,7 @@ public class UnilateralSortMerger<E> implements Sorter<E> {
 		/**
 		 * Removes a channel reader/writer from the list of channels that are to be removed at shutdown.
 		 * 
-		 * @param s The channel reader/writer.
+		 * @param channel The channel reader/writer.
 		 */
 		protected void unregisterOpenChannelToBeRemovedAtShudown(BlockChannelAccess<?, ?> channel) {
 			UnilateralSortMerger.this.openChannels.remove(channel);

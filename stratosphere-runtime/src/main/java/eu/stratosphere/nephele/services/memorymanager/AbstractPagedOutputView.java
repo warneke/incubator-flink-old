@@ -82,7 +82,7 @@ public abstract class AbstractPagedOutputView implements DataOutputView {
 	/**
 	 * 
 	 * This method must return a segment. If no more segments are available, it must throw an
-	 * {@link EOFException}.
+	 * {@link java.io.EOFException}.
 	 * 
 	 * @param current The current memory segment
 	 * @param positionInCurrent The position in the segment, one after the last valid byte.

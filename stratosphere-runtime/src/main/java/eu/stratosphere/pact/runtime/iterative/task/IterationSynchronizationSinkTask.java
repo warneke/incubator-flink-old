@@ -39,7 +39,7 @@ import eu.stratosphere.pact.runtime.task.util.TaskConfig;
 import eu.stratosphere.types.Value;
 
 /**
- * The task responsible for synchronizing all iteration heads, implemented as an {@link AbstractOutputTask}. This task
+ * The task responsible for synchronizing all iteration heads, implemented as an {@link AbstractInvokable}. This task
  * will never see any data.
  * In each superstep, it simply waits until it has receiced a {@link WorkerDoneEvent} from each head and will send back
  * an {@link AllWorkersDoneEvent} to signal that the next superstep can begin.

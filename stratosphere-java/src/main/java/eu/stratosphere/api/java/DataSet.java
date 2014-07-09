@@ -444,8 +444,8 @@ public abstract class DataSet<T> {
 	 *   joining elements into one DataSet.</br>
 	 * 
 	 * This method returns a {@link JoinOperatorSets} on which 
-	 *   {@link JoinOperatorSets#where()} needs to be called to define the join key of the first 
-	 *   joining (i.e., this) DataSet.
+	 *   {@link JoinOperatorSets#where(int, int...)} needs to be called to define the join
+	 *   key of the first joining (i.e., this) DataSet.
 	 *  
 	 * @param other The other DataSet with which this DataSet is joined.
 	 * @return A JoinOperatorSets to continue the definition of the Join transformation.
@@ -466,8 +466,8 @@ public abstract class DataSet<T> {
 	 * This method also gives the hint to the optimizer that the second DataSet to join is much
 	 *   smaller than the first one.</br>
 	 * This method returns a {@link JoinOperatorSets} on which 
-	 *   {@link JoinOperatorSets#where()} needs to be called to define the join key of the first 
-	 *   joining (i.e., this) DataSet.
+	 *   {@link JoinOperatorSets#where(int, int...)} needs to be called to define the join key of
+	 *   the first joining (i.e., this) DataSet.
 	 *  
 	 * @param other The other DataSet with which this DataSet is joined.
 	 * @return A JoinOperatorSets to continue the definition of the Join transformation.
@@ -488,7 +488,7 @@ public abstract class DataSet<T> {
 	 * This method also gives the hint to the optimizer that the second DataSet to join is much
 	 *   larger than the first one.</br>
 	 * This method returns a {@link JoinOperatorSets JoinOperatorSet} on which 
-	 *   {@link JoinOperatorSets#where()} needs to be called to define the join key of the first 
+	 *   {@link JoinOperatorSets#where(int, int...)} needs to be called to define the join key of the first 
 	 *   joining (i.e., this) DataSet.
 	 *  
 	 * @param other The other DataSet with which this DataSet is joined.
@@ -516,8 +516,8 @@ public abstract class DataSet<T> {
 	 * The CoGroupFunction can iterate over the elements of both groups and return any number 
 	 *   of elements including none.</br>
 	 * This method returns a {@link CoGroupOperatorSets} on which 
-	 *   {@link CoGroupOperatorSets#where(} needs to be called to define the grouping key of the first 
-	 *   (i.e., this) DataSet.
+	 *   {@link CoGroupOperatorSets#where(int, int...)} needs to be called to define the grouping key
+	 *   of the first (i.e., this) DataSet.
 	 * 
 	 * @param other The other DataSet of the CoGroup transformation.
 	 * @return A CoGroupOperatorSets to continue the definition of the CoGroup transformation.
@@ -559,7 +559,7 @@ public abstract class DataSet<T> {
 	 * second input being the second field of the tuple.
 	 * 
 	 * <p>
-	 * Call {@link DefaultCross.with(CrossFunction)} to define a {@link CrossFunction} which is called for
+	 * Call {@link DefaultCross#with(CrossFunction)} to define a {@link CrossFunction} which is called for
 	 * each pair of crossed elements. The CrossFunction returns a exactly one element for each pair of input elements.</br>
 	 * 
 	 * @param other The other DataSet with which this DataSet is crossed. 
@@ -588,7 +588,7 @@ public abstract class DataSet<T> {
 	 * second input being the second field of the tuple.
 	 *   
 	 * <p>
-	 * Call {@link DefaultCross.with(CrossFunction)} to define a {@link CrossFunction} which is called for
+	 * Call {@link DefaultCross#with(CrossFunction)} to define a {@link CrossFunction} which is called for
 	 * each pair of crossed elements. The CrossFunction returns a exactly one element for each pair of input elements.</br>
 	 * 
 	 * @param other The other DataSet with which this DataSet is crossed. 
@@ -617,7 +617,7 @@ public abstract class DataSet<T> {
 	 * second input being the second field of the tuple.
 	 *   
 	 * <p>
-	 * Call {@link DefaultCross.with(CrossFunction)} to define a {@link CrossFunction} which is called for
+	 * Call {@link DefaultCross#with(CrossFunction)} to define a {@link CrossFunction} which is called for
 	 * each pair of crossed elements. The CrossFunction returns a exactly one element for each pair of input elements.</br>
 	 * 
 	 * @param other The other DataSet with which this DataSet is crossed. 
@@ -794,8 +794,8 @@ public abstract class DataSet<T> {
 	 * Writes a {@link Tuple} DataSet as a CSV file to the specified location.<br/>
 	 * <b>Note: Only a Tuple DataSet can written as a CSV file.</b><br/>
 	 * For each Tuple field the result of {@link Object#toString()} is written.
-	 * Tuple fields are separated by the default field delimiter {@link CsvOutputFormat.DEFAULT_FIELD_DELIMITER}.<br/>
-	 * Tuples are are separated by the default line delimiter {@link CsvOutputFormat.DEFAULT_LINE_DELIMITER}.
+	 * Tuple fields are separated by the default field delimiter {@link CsvOutputFormat#DEFAULT_FIELD_DELIMITER}.<br/>
+	 * Tuples are are separated by the default line delimiter {@link CsvOutputFormat#DEFAULT_LINE_DELIMITER}.
 	 * 
 	 * @param filePath The path pointing to the location the CSV file is written to.
 	 * @return The DataSink that writes the DataSet.

@@ -17,8 +17,9 @@ import eu.stratosphere.core.io.IOReadableWritable;
 
 /**
  * This type of event can be used to exchange notification messages between
- * different {@link TaskManager} objects at runtime using the communication
- * channels Nephele has established between different tasks.
+ * different {@link eu.stratosphere.nephele.taskmanager.TaskManager} objects
+ * at runtime using the communication channels Nephele has established between
+ * different tasks.
  * 
  */
 public abstract class AbstractEvent implements IOReadableWritable {

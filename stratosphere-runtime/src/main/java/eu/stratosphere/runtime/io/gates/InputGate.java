@@ -40,8 +40,8 @@ import eu.stratosphere.nephele.jobgraph.JobID;
 /**
  * In Nephele input gates are a specialization of general gates and connect input channels and record readers. As
  * channels, input gates are always parameterized to a specific type of record which they can transport. In contrast to
- * output gates input gates can be associated with a {@link eu.stratosphere.runtime.io.serialization.io.DistributionPattern} object which dictates the concrete
- * wiring between two groups of vertices.
+ * output gates input gates can be associated with a {@link eu.stratosphere.nephele.jobgraph.DistributionPattern} object
+ * which dictates the concrete wiring between two groups of vertices.
  * 
  * @param <T> The type of record that can be transported through this gate.
  */

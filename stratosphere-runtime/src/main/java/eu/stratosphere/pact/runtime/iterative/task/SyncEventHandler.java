@@ -25,10 +25,9 @@ import eu.stratosphere.types.Value;
 //import org.apache.commons.logging.LogFactory;
 
 /**
-* a delegating {@link MutableObjectIterator} that interrupts the current thread when a given number of events occured.
-* This is necessary to repetitively read channels when executing iterative data flows. The wrapped iterator must return
-* false
-* on interruption, see {@link eu.stratosphere.pact.runtime.task.util.ReaderInterruptionBehaviors}
+* a delegating {@link eu.stratosphere.util.MutableObjectIterator} that interrupts the current thread when a given number
+* of events occurred. This is necessary to repetitively read channels when executing iterative data flows. The wrapped iterator
+* must return false on interruption.
 */
 public class SyncEventHandler implements EventListener {
 	

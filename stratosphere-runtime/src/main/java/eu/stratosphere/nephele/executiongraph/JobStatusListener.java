@@ -21,7 +21,7 @@ package eu.stratosphere.nephele.executiongraph;
 public interface JobStatusListener {
 
 /**
-	 * Called when the status of the job with the given {@li
+	 * Called when the status of the job with the given {@link InternalJobStatus}.
 	 * 
 	 * @param executionGraph
 	 *        the executionGraph representing the job the event belongs to

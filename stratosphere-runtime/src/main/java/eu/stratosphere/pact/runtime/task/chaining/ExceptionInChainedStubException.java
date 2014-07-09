@@ -30,7 +30,8 @@ public class ExceptionInChainedStubException extends RuntimeException
 	/**
 	 * Creates a new ExceptionInChainedStubException with the given cause.
 	 * 
-	 * @param cause The causing exception.
+	 * @param taskName the name of the task the exception originates from 
+	 * @param wrappedException the original exception
 	 */
 	public ExceptionInChainedStubException(String taskName, Exception wrappedException) {
 		super();

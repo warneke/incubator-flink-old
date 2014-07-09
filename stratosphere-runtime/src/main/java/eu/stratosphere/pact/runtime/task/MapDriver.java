@@ -25,7 +25,7 @@ import eu.stratosphere.util.MutableObjectIterator;
  * The MapTask creates an iterator over all key-value pairs of its input and hands that to the <code>map()</code> method
  * of the MapFunction.
  * 
- * @see GenericCollectorMap
+ * @see eu.stratosphere.api.common.functions.GenericCollectorMap
  * 
  * @param <IT> The mapper's input data type.
  * @param <OT> The mapper's output data type.

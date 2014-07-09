@@ -27,14 +27,14 @@ import eu.stratosphere.pact.runtime.iterative.io.WorksetUpdateOutputCollector;
 import eu.stratosphere.util.Collector;
 
 /**
- * An intermediate iteration task, which runs a {@link PactDriver} inside.
+ * An intermediate iteration task, which runs a {@link eu.stratosphere.pact.runtime.task.PactDriver} inside.
  * <p/>
  * It will propagate {@link EndOfSuperstepEvent}s and {@link TerminationEvent}s to it's connected tasks. Furthermore
  * intermediate tasks can also update the iteration state, either the workset or the solution set.
  * <p/>
  * If the iteration state is updated, the output of this task will be send back to the {@link IterationHeadPactTask} via
- * a {@link BlockingBackChannel} for the workset -XOR- a {@link MutableHashTable} for the solution set. In this case
- * this task must be scheduled on the same instance as the head.
+ * a {@link BlockingBackChannel} for the workset -XOR- a {@link eu.stratosphere.pact.runtime.hash.MutableHashTable} for
+ * the solution set. In this case this task must be scheduled on the same instance as the head.
  */
 public class IterationIntermediatePactTask<S extends Function, OT> extends AbstractIterativePactTask<S, OT> {
 

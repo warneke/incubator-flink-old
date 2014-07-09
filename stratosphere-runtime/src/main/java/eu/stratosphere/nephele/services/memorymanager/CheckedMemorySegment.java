@@ -51,13 +51,6 @@ public class CheckedMemorySegment {
 	//                             Constructors
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Creates a new memory segment of given size with the provided views.
-	 * 
-	 * @param size The size of the memory segment.
-	 * @param inputView The input view to use.
-	 * @param outputView The output view to use.
-	 */
 	public CheckedMemorySegment(byte[] memory) {
 		this.memory = memory;
 		this.offset = 0;
@@ -159,7 +152,7 @@ public class CheckedMemorySegment {
 	/**
 	 * Reads the byte at the given position.
 	 * 
-	 * @param position The position from which the byte will be read
+	 * @param index The position from which the byte will be read
 	 * @return The byte at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger or equal to the size of
@@ -176,7 +169,7 @@ public class CheckedMemorySegment {
 	/**
 	 * Writes the given byte into this buffer at the given position.
 	 * 
-	 * @param position The position at which the byte will be written.
+	 * @param index The position at which the byte will be written.
 	 * @param b The byte value to be written.
 	 * @return This view itself.
 	 * 
@@ -196,7 +189,7 @@ public class CheckedMemorySegment {
 	 * Bulk get method. Copies dst.length memory from the specified position to
 	 * the destination memory.
 	 * 
-	 * @param position The position at which the first byte will be read.
+	 * @param index The position at which the first byte will be read.
 	 * @param dst The memory into which the memory will be copied.
 	 * @return This view itself.
 	 * 
@@ -227,7 +220,7 @@ public class CheckedMemorySegment {
 	 * Bulk get method. Copies length memory from the specified position to the
 	 * destination memory, beginning at the given offset
 	 * 
-	 * @param position
+	 * @param index
 	 *        The position at which the first byte will be read.
 	 * @param dst
 	 *        The memory into which the memory will be copied.
@@ -319,7 +312,7 @@ public class CheckedMemorySegment {
 	 * Reads one byte at the given position and returns its boolean
 	 * representation.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The char value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -337,7 +330,7 @@ public class CheckedMemorySegment {
 	 * Writes one byte containing the byte value into this buffer at the given
 	 * position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The char value to be written.
 	 * @return This view itself.
 	 * 
@@ -357,7 +350,7 @@ public class CheckedMemorySegment {
 	 * Reads two memory at the given position, composing them into a char value
 	 * according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The char value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -376,7 +369,7 @@ public class CheckedMemorySegment {
 	 * Writes two memory containing the given char value, in the current byte
 	 * order, into this buffer at the given position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The char value to be written.
 	 * @return This view itself.
 	 * 
@@ -397,7 +390,7 @@ public class CheckedMemorySegment {
 	 * Reads two memory at the given position, composing them into a short value
 	 * according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The short value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -417,7 +410,7 @@ public class CheckedMemorySegment {
 	 * Writes two memory containing the given short value, in the current byte
 	 * order, into this buffer at the given position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The short value to be written.
 	 * @return This view itself.
 	 * 
@@ -593,7 +586,7 @@ public class CheckedMemorySegment {
 	 * Reads four memory at the given position, composing them into a float
 	 * value according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The float value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -607,7 +600,7 @@ public class CheckedMemorySegment {
 	 * Writes four memory containing the given float value, in the current byte
 	 * order, into this buffer at the given position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The float value to be written.
 	 * @return This view itself.
 	 * 
@@ -623,7 +616,7 @@ public class CheckedMemorySegment {
 	 * Reads eight memory at the given position, composing them into a double
 	 * value according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The double value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -637,7 +630,7 @@ public class CheckedMemorySegment {
 	 * Writes eight memory containing the given double value, in the current
 	 * byte order, into this buffer at the given position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The double value to be written.
 	 * @return This view itself.
 	 * 

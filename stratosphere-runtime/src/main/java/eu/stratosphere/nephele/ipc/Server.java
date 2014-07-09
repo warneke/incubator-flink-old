@@ -63,8 +63,8 @@ import eu.stratosphere.core.protocols.VersionedProtocol;
 import eu.stratosphere.util.ClassUtils;
 
 /**
- * An abstract IPC service. IPC calls take a single {@link Writable} as a
- * parameter, and return a {@link Writable} as their value. A service runs on
+ * An abstract IPC service. IPC calls take a single {@link IOReadableWritable} as a
+ * parameter, and return a {@link IOReadableWritable} as their value. A service runs on
  * a port and is defined by a parameter class and a value class.
  * 
  * @see Client
@@ -97,8 +97,8 @@ public abstract class Server {
 	}
 
 	/**
-	 * Returns the server instance called under or null. May be called under {@link #call(Writable, long)}
-	 * implementations, and under {@link Writable} methods of paramters and return values. Permits applications to
+	 * Returns the server instance called under or null. May be called under {@link #call(Class, IOReadableWritable, long)}
+	 * implementations, and under {@link IOReadableWritable} methods of parameters and return values. Permits applications to
 	 * access
 	 * the server context.
 	 */

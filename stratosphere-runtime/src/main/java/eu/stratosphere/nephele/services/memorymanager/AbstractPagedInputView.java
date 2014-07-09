@@ -94,7 +94,7 @@ public abstract class AbstractPagedInputView implements DataInputView {
 	 * Gets the position from which the next byte will be read. If that position is equal to the current limit,
 	 * then the next byte will be read from next segment.
 	 * 
-	 * @return
+	 * @return the position from which the next byte will be read
 	 * @see #getCurrentSegmentLimit()
 	 */
 	public int getCurrentPositionInSegment() {

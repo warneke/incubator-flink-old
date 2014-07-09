@@ -23,10 +23,10 @@ import eu.stratosphere.nephele.services.memorymanager.AbstractPagedOutputView;
 
 
 /**
- * A {@link DataOutputView} that is backed by a {@link BlockChannelWriter}, making it effectively a data output
- * stream. The view writes it data in blocks to the underlying channel, adding a minimal header to each block.
- * The data can be re-read by a {@link ChannelReaderInputView}, if it uses the same block size.
- *
+ * A {@link eu.stratosphere.core.memory.DataOutputView} that is backed by a {@link BlockChannelWriter},
+ * making it effectively a data output stream. The view writes it data in blocks to the underlying channel,
+ * adding a minimal header to each block. The data can be re-read by a {@link ChannelReaderInputView},
+ * if it uses the same block size.
  */
 public final class ChannelWriterOutputView extends AbstractPagedOutputView
 {

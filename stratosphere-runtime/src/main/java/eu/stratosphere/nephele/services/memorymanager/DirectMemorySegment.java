@@ -41,13 +41,6 @@ public class DirectMemorySegment {
 	//                             Constructors
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Creates a new memory segment of given size with the provided views.
-	 * 
-	 * @param size The size of the memory segment.
-	 * @param inputView The input view to use.
-	 * @param outputView The output view to use.
-	 */
 	public DirectMemorySegment(byte[] memory) {
 		this.memory = memory;
 	}

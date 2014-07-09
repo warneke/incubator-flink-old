@@ -20,7 +20,8 @@ import eu.stratosphere.runtime.io.gates.GateID;
 import eu.stratosphere.runtime.io.channels.ChannelType;
 
 /**
- * Objects of this class represent either an {@link InputGate} or {@link OutputGate} within an {@link ExecutionGraph},
+ * Objects of this class represent either an {@link eu.stratosphere.runtime.io.gates.InputGate} or
+ * {@link eu.stratosphere.runtime.io.gates.OutputGate} within an {@link ExecutionGraph},
  * Nephele's internal scheduling representation for jobs.
  * <p>
  * This class is thread-safe.

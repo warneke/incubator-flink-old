@@ -46,13 +46,6 @@ public class UnsafeMemorySegment {
 	//                             Constructors
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Creates a new memory segment of given size with the provided views.
-	 * 
-	 * @param size The size of the memory segment.
-	 * @param inputView The input view to use.
-	 * @param outputView The output view to use.
-	 */
 	public UnsafeMemorySegment(byte[] memory) {
 		this.memory = memory;
 	}
@@ -154,7 +147,7 @@ public class UnsafeMemorySegment {
 	/**
 	 * Reads the byte at the given position.
 	 * 
-	 * @param position The position from which the byte will be read
+	 * @param index The position from which the byte will be read
 	 * @return The byte at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger or equal to the size of
@@ -167,9 +160,8 @@ public class UnsafeMemorySegment {
 	/**
 	 * Writes the given byte into this buffer at the given position.
 	 * 
-	 * @param position The position at which the byte will be written.
+	 * @param index The position at which the byte will be written.
 	 * @param b The byte value to be written.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger or equal to the size of
 	 *                                   the memory segment.
@@ -182,9 +174,8 @@ public class UnsafeMemorySegment {
 	 * Bulk get method. Copies dst.length memory from the specified position to
 	 * the destination memory.
 	 * 
-	 * @param position The position at which the first byte will be read.
+	 * @param index The position at which the first byte will be read.
 	 * @param dst The memory into which the memory will be copied.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or too large that the data between the 
 	 *                                   index and the memory segment end is not enough to fill the destination array.
@@ -199,7 +190,6 @@ public class UnsafeMemorySegment {
 	 * 
 	 * @param index The position in the memory segment array, where the data is put.
 	 * @param src The source array to copy the data from.
-	 * @return This random access view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or too large such that the array 
 	 *                                   size exceed the amount of memory between the index and the memory
@@ -213,7 +203,7 @@ public class UnsafeMemorySegment {
 	 * Bulk get method. Copies length memory from the specified position to the
 	 * destination memory, beginning at the given offset
 	 * 
-	 * @param position
+	 * @param index
 	 *        The position at which the first byte will be read.
 	 * @param dst
 	 *        The memory into which the memory will be copied.
@@ -221,7 +211,6 @@ public class UnsafeMemorySegment {
 	 *        The copying offset in the destination memory.
 	 * @param length
 	 *        The number of bytes to be copied.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or too large that the requested number of 
 	 *                                   bytes exceed the amount of memory between the index and the memory
@@ -240,7 +229,6 @@ public class UnsafeMemorySegment {
 	 * @param src The source array to copy the data from.
 	 * @param offset The offset in the source array where the copying is started.
 	 * @param length The number of bytes to copy.
-	 * @return This random access view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or too large such that the array 
 	 *                                   portion to copy exceed the amount of memory between the index and the memory
@@ -257,7 +245,6 @@ public class UnsafeMemorySegment {
 	 * @param out The data output object to copy the data to.
 	 * @param offset The first byte to by copied.
 	 * @param length The number of bytes to copy.
-	 * @return This view itself.
 	 * 
 	 * @throws IOException Thrown, if the DataOutput encountered a problem upon writing.
 	 */
@@ -272,7 +259,6 @@ public class UnsafeMemorySegment {
 	 * @param in The DataInput to get the data from.
 	 * @param offset The position in the memory segment to copy the chunk to.
 	 * @param length The number of bytes to get. 
-	 * @return This random access view itself.
 	 * 
 	 * @throws IOException Thrown, if the DataInput encountered a problem upon reading,
 	 *                     such as an End-Of-File.
@@ -285,7 +271,7 @@ public class UnsafeMemorySegment {
 	 * Reads one byte at the given position and returns its boolean
 	 * representation.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The char value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -299,9 +285,8 @@ public class UnsafeMemorySegment {
 	 * Writes one byte containing the byte value into this buffer at the given
 	 * position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The char value to be written.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
 	 *                                   size minus 1.
@@ -314,7 +299,7 @@ public class UnsafeMemorySegment {
 	 * Reads two memory at the given position, composing them into a char value
 	 * according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The char value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -329,9 +314,8 @@ public class UnsafeMemorySegment {
 	 * Writes two memory containing the given char value, in the current byte
 	 * order, into this buffer at the given position.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The char value to be written.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
 	 *                                   size minus 2.
@@ -345,7 +329,7 @@ public class UnsafeMemorySegment {
 	 * Reads two memory at the given position, composing them into a short value
 	 * according to the current byte order.
 	 * 
-	 * @param position The position from which the memory will be read.
+	 * @param index The position from which the memory will be read.
 	 * @return The short value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -361,7 +345,7 @@ public class UnsafeMemorySegment {
 	 * Writes the given short value into this buffer at the given position, using
 	 * the native byte order of the system.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The short value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -380,7 +364,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The int value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -407,7 +391,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getInt(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The int value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -429,7 +413,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getInt(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The int value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -451,7 +435,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The int value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -478,7 +462,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putInt(int, int)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The int value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -500,7 +484,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putInt(int, int)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The int value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -522,7 +506,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -549,7 +533,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getLong(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -571,7 +555,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getLong(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -593,7 +577,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -620,7 +604,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putLong(int, long)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -642,7 +626,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putLong(int, long)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -664,7 +648,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The float value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -682,7 +666,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getFloat(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -700,7 +684,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getFloat(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -718,7 +702,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The float value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -736,7 +720,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putFloat(int, float)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -754,7 +738,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putFloat(int, float)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -772,7 +756,7 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The double value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -790,7 +774,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getDouble(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -808,7 +792,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #getDouble(int)} is the preferable choice.
 	 * 
-	 * @param position The position from which the value will be read.
+	 * @param index The position from which the value will be read.
 	 * @return The long value at the given position.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -826,9 +810,8 @@ public class UnsafeMemorySegment {
 	 * (such as transient storage in memory, or serialization for I/O and network), making this
 	 * method the preferable choice.
 	 * 
-	 * @param position The position at which the memory will be written.
+	 * @param index The position at which the memory will be written.
 	 * @param value The double value to be written.
-	 * @return This view itself.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
 	 *                                   size minus 8.
@@ -845,7 +828,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putDouble(int, double)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment
@@ -863,7 +846,7 @@ public class UnsafeMemorySegment {
 	 * it suffices to know that the byte order in which the value is written is the same as the
 	 * one in which it is read, and {@link #putDouble(int, double)} is the preferable choice.
 	 * 
-	 * @param position The position at which the value will be written.
+	 * @param index The position at which the value will be written.
 	 * @param value The long value to be written.
 	 * 
 	 * @throws IndexOutOfBoundsException Thrown, if the index is negative, or larger then the segment

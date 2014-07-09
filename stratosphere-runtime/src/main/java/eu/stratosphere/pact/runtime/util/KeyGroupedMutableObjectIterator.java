@@ -38,14 +38,6 @@ public final class KeyGroupedMutableObjectIterator<E>
 
 	private boolean nextIsFresh;
 
-	/**
-	 * Initializes the KeyGroupedIterator. It requires an iterator which returns its result
-	 * sorted by the key fields.
-	 * 
-	 * @param iterator An iterator over records, which are sorted by the key fields, in any order.
-	 * @param keyPositions The positions of the keys in the records.
-	 * @param keyClasses The types of the key fields.
-	 */
 	public KeyGroupedMutableObjectIterator(MutableObjectIterator<E> iterator,
 			TypeSerializer<E> serializer, TypeComparator<E> comparator)
 	{

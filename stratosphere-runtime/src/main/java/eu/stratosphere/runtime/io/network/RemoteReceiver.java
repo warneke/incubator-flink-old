@@ -22,18 +22,18 @@ import eu.stratosphere.core.memory.DataInputView;
 import eu.stratosphere.core.memory.DataOutputView;
 
 /**
- * Objects of this class uniquely identify a connection to a remote {@link TaskManager}.
+ * Objects of this class uniquely identify a connection to a remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
  * 
  */
 public final class RemoteReceiver implements IOReadableWritable {
 
 	/**
-	 * The address of the connection to the remote {@link TaskManager}.
+	 * The address of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
 	 */
 	private InetSocketAddress connectionAddress;
 
 	/**
-	 * The index of the connection to the remote {@link TaskManager}.
+	 * The index of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
 	 */
 	private int connectionIndex;
 
@@ -41,9 +41,9 @@ public final class RemoteReceiver implements IOReadableWritable {
 	 * Constructs a new remote receiver object.
 	 * 
 	 * @param connectionAddress
-	 *        the address of the connection to the remote {@link TaskManager}
+	 *        the address of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}
 	 * @param connectionIndex
-	 *        the index of the connection to the remote {@link TaskManager}
+	 *        the index of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}
 	 */
 	public RemoteReceiver(final InetSocketAddress connectionAddress, final int connectionIndex) {
 		if (connectionAddress == null) {
@@ -66,18 +66,18 @@ public final class RemoteReceiver implements IOReadableWritable {
 	}
 
 	/**
-	 * Returns the address of the connection to the remote {@link TaskManager}.
+	 * Returns the address of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
 	 * 
-	 * @return the address of the connection to the remote {@link TaskManager}
+	 * @return the address of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}
 	 */
 	public InetSocketAddress getConnectionAddress() {
 		return this.connectionAddress;
 	}
 
 	/**
-	 * Returns the index of the connection to the remote {@link TaskManager}.
+	 * Returns the index of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}.
 	 * 
-	 * @return the index of the connection to the remote {@link TaskManager}
+	 * @return the index of the connection to the remote {@link eu.stratosphere.nephele.taskmanager.TaskManager}
 	 */
 	public int getConnectionIndex() {
 		return this.connectionIndex;

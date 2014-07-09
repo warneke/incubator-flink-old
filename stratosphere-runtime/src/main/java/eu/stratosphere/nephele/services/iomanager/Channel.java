@@ -51,7 +51,7 @@ public final class Channel
 		/**
 		 * Returns the path to the underlying temporary file.
 		 * 
-		 * @return
+		 * @return the path to the underlying temporary file
 		 */
 		public String getPath() {
 			return path;

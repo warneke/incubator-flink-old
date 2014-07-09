@@ -72,7 +72,7 @@ public interface MemoryManager {
 
 	/**
 	 * Returns the total size of memory.
-	 * @return
+	 * @return the total size of memeory
 	 */
 	long getMemorySize();
 	
@@ -89,7 +89,7 @@ public interface MemoryManager {
 	/**
 	 * Computes the memory size of the fraction per slot.
 	 * @param fraction
-	 * @return
+	 * @return the memory size of the fraction per slot
 	 */
 	long computeMemorySize(double fraction);
 	

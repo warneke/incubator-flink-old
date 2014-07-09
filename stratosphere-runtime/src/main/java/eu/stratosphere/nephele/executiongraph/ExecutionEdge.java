@@ -17,8 +17,9 @@ import eu.stratosphere.runtime.io.channels.ChannelID;
 import eu.stratosphere.runtime.io.channels.ChannelType;
 
 /**
- * Objects of this class represent a pair of {@link eu.stratosphere.runtime.io.serialization.io.channels.InputChannel} and {@link AbstractOutputChannel} objects
- * within an {@link ExecutionGraph}, Nephele's internal scheduling representation for jobs.
+ * Objects of this class represent a pair of {@link eu.stratosphere.runtime.io.channels.InputChannel} and
+ * {@link eu.stratosphere.runtime.io.channels.OutputChannel} objects within an {@link ExecutionGraph},
+ * Nephele's internal scheduling representation for jobs.
  */
 public final class ExecutionEdge {
 

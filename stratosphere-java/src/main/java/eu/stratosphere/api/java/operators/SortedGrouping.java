@@ -83,7 +83,8 @@ public class SortedGrouping<T> extends Grouping<T> {
 	// --------------------------------------------------------------------------------------------
 	
 	/**
-	 * Sorts {@link Tuple} elements within a group on the specified field in the specified {@link Order}.</br>
+	 * Sorts {@link eu.stratosphere.api.java.tuple.Tuple} elements within a group on the specified field
+	 * in the specified {@link Order}.</br>
 	 * <b>Note: Only groups of Tuple elements can be sorted.</b><br/>
 	 * Groups can be sorted by multiple fields by chaining {@link #sortGroup(int, Order)} calls.
 	 * 
@@ -91,7 +92,7 @@ public class SortedGrouping<T> extends Grouping<T> {
 	 * @param order The Order in which the specified Tuple field is sorted.
 	 * @return A SortedGrouping with specified order of group element.
 	 * 
-	 * @see Tuple
+	 * @see eu.stratosphere.api.java.tuple.Tuple
 	 * @see Order
 	 */
 	public SortedGrouping<T> sortGroup(int field, Order order) {

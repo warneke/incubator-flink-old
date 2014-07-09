@@ -24,12 +24,12 @@ import eu.stratosphere.pact.runtime.task.PactTaskContext;
 import eu.stratosphere.util.Collector;
 
 /**
- * An iteration tail, which runs a {@link PactDriver} inside.
+ * An iteration tail, which runs a {@link eu.stratosphere.pact.runtime.task.PactDriver} inside.
  * <p/>
  * If the iteration state is updated, the output of this task will be send back to the {@link IterationHeadPactTask} via
- * a {@link BlockingBackChannel} for the workset -OR- a {@link MutableHashTable} for the solution set. Therefore this
- * task must be scheduled on the same instance as the head. It's also possible for the tail to update *both* the workset
- * and the solution set.
+ * a {@link eu.stratosphere.pact.runtime.iterative.concurrent.BlockingBackChannel} for the workset -OR- a
+ * {@link eu.stratosphere.pact.runtime.hash.MutableHashTable} for the solution set. Therefore this task must be scheduled
+ * on the same instance as the head. It's also possible for the tail to update *both* the workset and the solution set.
  * <p/>
  * If there is a separate solution set tail, the iteration head has to make sure to wait for it to finish.
  */

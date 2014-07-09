@@ -21,10 +21,12 @@ import eu.stratosphere.core.io.IOReadableWritable;
  * 
  */
 public interface MutableReader<T extends IOReadableWritable> extends ReaderBase {
-	
+
 	/**
 	 * @param target
-	 * @return
+	 *            the target object to store the next element in
+	 * @return <code>true</code> if the next element has been stored in target,
+	 *         <code>false</code> if there are no more elements
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */

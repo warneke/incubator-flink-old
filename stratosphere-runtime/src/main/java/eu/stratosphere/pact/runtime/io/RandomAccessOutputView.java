@@ -36,8 +36,8 @@ public class RandomAccessOutputView extends AbstractPagedOutputView implements S
 	private final int segmentSizeMask;
 	
 	/**
+	 * @param segments
 	 * @param segmentSize
-	 * @param headerLength
 	 */
 	public RandomAccessOutputView(MemorySegment[] segments, int segmentSize)
 	{

@@ -82,7 +82,7 @@ public final class RecordComparator extends TypeComparator<Record> {
 	 * 
 	 * @param keyFields The positions of the key fields.
 	 * @param keyTypes The types (classes) of the key fields.
-	 * @param sortOrder The direction for sorting. A value of <i>true</i> indicates ascending for an attribute,
+	 * @param sortDirection The direction for sorting. A value of <i>true</i> indicates ascending for an attribute,
 	 *                  a value of <i>false</i> indicated descending. If the parameter is <i>null</i>, then
 	 *                  all order comparisons will assume ascending order on all fields.
 	 */

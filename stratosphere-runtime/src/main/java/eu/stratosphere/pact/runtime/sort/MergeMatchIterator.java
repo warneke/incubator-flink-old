@@ -143,7 +143,7 @@ public class MergeMatchIterator<T1, T2, O> implements JoinTaskIterator<T1, T2, O
 	 * 
 	 * @throws Exception Forwards all exceptions from the user code and the I/O system.
 	 * 
-	 * @see eu.stratosphere.pact.runtime.task.util.JoinTaskIterator#callWithNextKey()
+	 * @see eu.stratosphere.pact.runtime.task.util.JoinTaskIterator#callWithNextKey(GenericJoiner, Collector)
 	 */
 	@Override
 	public boolean callWithNextKey(final GenericJoiner<T1, T2, O> matchFunction, final Collector<O> collector)
