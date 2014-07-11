@@ -1318,8 +1318,9 @@ public class ExecutionGraph implements ExecutionListener {
 	}
 	
 	/**
-	 * Retrieves the number of required slots to run this execution graph
-	 * @return
+	 * Retrieves the number of required slots to run this execution graph.
+	 * 
+	 * @return the number of requires slots to run this execution graph
 	 */
 	public int getRequiredSlots(){
 		int maxRequiredSlots = 0;

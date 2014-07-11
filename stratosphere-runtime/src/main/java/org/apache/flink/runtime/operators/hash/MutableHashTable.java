@@ -525,10 +525,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
 			return false;
 		}
 	}
-	/**
-	 * @return
-	 * @throws IOException
-	 */
+	
 	public boolean nextRecord() throws IOException {
 		
 		final boolean probeProcessing = processProbeIter();
@@ -590,16 +587,10 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
 //		}
 //	}
 	
-	/**
-	 * @return
-	 */
 	public PT getCurrentProbeRecord() {
 		return this.probeIterator.getCurrent();
 	}
 	
-	/**
-	 * @return
-	 */
 	public HashBucketIterator<BT, PT> getBuildSideIterator() {
 		return this.bucketIterator;
 	}
@@ -1019,11 +1010,6 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
 		this.partitionsBeingBuilt.clear();
 	}
 	
-	/**
-	 * @param numBuckets
-	 * @param numPartitions
-	 * @return
-	 */
 	protected void initTable(int numBuckets, byte numPartitions) {
 		final int bucketsPerSegment = this.bucketsPerSegmentMask + 1;
 		final int numSegs = (numBuckets >>> this.bucketsPerSegmentBits) + ( (numBuckets & this.bucketsPerSegmentMask) == 0 ? 0 : 1);
